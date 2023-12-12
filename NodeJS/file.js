@@ -41,17 +41,6 @@ router.post("/file_process", upload.single("uploadfile"), function (req, res) {
     var mimeType = file.mimetype;
     var size = file.size;
 
-    res.writeHead("200", { "Content-type": "text/html;charset=utf-8" });
-    res.write("<h1>파일 업로드 성공</h1>");
-
-    res.write("<hr/>");
-    res.write("<div>원본파일명 : " + originalName + "</div>");
-    res.write("<div>저장파일명 : " + fileName + "</div>");
-    res.write("<div>MimeType : " + mimeType + "</div>");
-    res.write("<div>파일크기 : " + size + "</div>");
-
-    res.write("<a href=/main>메인화면</a>");
-
     res.send(`
     <script type="text/javascript">alert("파일업로드가 완료되었습니다.!");
     document.location.href="/";</script>
