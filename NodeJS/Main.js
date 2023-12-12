@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 
 var authRouter = require("./auth");
 var fileRouter = require("./file");
+var aiRouter = require("./ai");
+
 var authCheck = require("./authCheck.js");
 var template = require("./template.js");
 
@@ -19,6 +21,10 @@ app.use(
   })
 );
 
+app.use("/auth", authRouter); // 인증 라우터
+app.use("/file", fileRouter); // 파일 라우터
+app.use("/ai", aiRouter); // ai 라우터
+
 app.get("/", (req, res) => {
   if (!authCheck.isOwner(req, res)) {
     // 로그인 안되어있으면 로그인 페이지로 이동시킴
@@ -30,12 +36,6 @@ app.get("/", (req, res) => {
     return false;
   }
 });
-
-// 인증 라우터
-app.use("/auth", authRouter);
-
-// 파일 라우터
-app.use("/file", fileRouter);
 
 // 메인 페이지
 app.get("/main", (req, res) => {
@@ -50,6 +50,7 @@ app.get("/main", (req, res) => {
     <h2>메인 페이지에 오신 것을 환영합니다</h2>
     <p>로그인에 성공하셨습니다.</p>
     <a href="/file">FileUpload</a>
+    <a href="/ai">AI Module</a>
     `,
     authCheck.statusUI(req, res)
   );
