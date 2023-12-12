@@ -1,5 +1,6 @@
 #https://subbak2.com/21 -> 참조한 사이트
 
+
 import tensorflow as tf #TensorFlow 선언
 mnist = tf.keras.datasets.mnist #TensorFlow의 keras의 DataSet을 가져옴 -> mnist를 가져옴
 #mnist -> 사람이 손으로(수기) 작성한 숫자 이미지

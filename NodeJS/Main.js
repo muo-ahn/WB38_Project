@@ -2,6 +2,10 @@ const express = require("express");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 
+const modulePath = "./NodeJS/AI_Module/test.py";
+const { spawn } = require("child_process");
+const result = spawn("python", [modulePath]);
+
 var authRouter = require("./auth");
 var fileRouter = require("./file");
 var aiRouter = require("./ai");
@@ -58,5 +62,10 @@ app.get("/main", (req, res) => {
 });
 
 app.listen(port, () => {
+  result.stdout.on("data", function (data) {
+    console.log(data.toString());
+  });
   console.log(`Example app listening on port ${port}`);
 });
+
+module.exports = { result, spawn };
