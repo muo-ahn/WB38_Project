@@ -8,6 +8,7 @@
     "passport": "^0.7.0",
     "passport-facebook": "^3.0.0",
     "passport-local": "^1.0.0",
-    "pbkdf2-password": "^1.2.1"
+    "pbkdf2-password": "^1.2.1",
+    "python-shell": "^5.0.0"
   }
 }
