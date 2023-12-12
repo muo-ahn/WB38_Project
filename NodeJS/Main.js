@@ -62,9 +62,9 @@ app.get("/main", (req, res) => {
 });
 
 app.listen(port, () => {
-  result.stdout.on("data", function (data) {
-    console.log(data.toString());
-  });
+  // result.stdout.on("data", function (data) {
+  //   console.log(data.toString());
+  // });
   console.log(`Example app listening on port ${port}`);
 });
 
