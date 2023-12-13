@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var template = require("../template.js");
-var db = require("../db.js");
+var userModule = require("../user.js");
 var bkfd2Password = require("pbkdf2-password");
 var hasher = bkfd2Password();
 
@@ -26,33 +26,42 @@ router.get("/login", function (req, res) {
 router.post("/login_process", function (req, res) {
   var username = req.body.username;
   var pwd = req.body.pwd;
+
   if (username && pwd) {
-    // id와 pw가 입력되었는지 확인
-    db.query(
-      "SELECT * FROM userTable WHERE username = ?",
-      [username],
-      function (error, results, fields) {
-        if (error) throw error;
-        if (results.length > 0) {
-          //pw 복호화
+    // username pwd 검사
+    userModule.find(username, function (error, user) {
+      if (error) {
+        console.error("Error:", error);
+        res.send(
+          '<script type="text/javascript">alert("An error occurred."); document.location.href="/auth/login";</script>'
+        );
+      } else {
+        if (user) {
+          // 복호화 후 비밀번호 hash 검사
           hasher(
-            { password: pwd, salt: results[0].salt },
+            { password: pwd, salt: user.salt },
             function (err, pass, salt, hash) {
-              if (hash == results[0].password) {
-                req.session.is_logined = true; // 세션 정보 갱신
+              if (hash === user.password) {
+                req.session.is_logined = true; // 세션 정보 업데이트
                 req.session.nickname = username;
                 req.session.save(function () {
                   res.redirect(`/`);
                 });
+              } else {
+                res.send(
+                  '<script type="text/javascript">alert("비밀번호 오류."); document.location.href="/auth/login";</script>'
+                );
               }
             }
           );
         } else {
-          res.send(`<script type="text/javascript">alert("로그인 정보가 일치하지 않습니다."); 
-            document.location.href="/auth/login";</script>`);
+          // db에서 유저를 찾지 못한 경우
+          res.send(
+            '<script type="text/javascript">alert("존재하지 않는 id"); document.location.href="/auth/login";</script>'
+          );
         }
       }
-    );
+    });
   } else {
     res.send(`<script type="text/javascript">alert("아이디와 비밀번호를 입력하세요!"); 
     document.location.href="/auth/login";</script>`);
@@ -91,40 +100,48 @@ router.post("/register_process", function (req, res) {
   var email = req.body.email;
 
   if (username && password && password2) {
-    db.query(
-      "SELECT * FROM userTable WHERE username = ?",
-      [username],
-      function (error, results, fields) {
-        // DB에 같은 이름의 회원아이디가 있는지 확인
-        if (error) throw error;
-        if (results.length <= 0 && password == password2) {
-          // DB에 같은 이름의 회원아이디가 없고, 비밀번호가 올바르게 입력된 경우
+    // 입력 확인
+    userModule.find(username, function (error, user) {
+      if (error) {
+        console.error("Error:", error);
+        res.send(
+          '<script type="text/javascript">alert("에러 발생"); document.location.href="/auth/register";</script>'
+        );
+      } else {
+        if (!user && password === password2) {
+          // 존재하지 않는 id이므로 복호화 후, 회원가입 시도
           hasher({ password: password }, function (err, pass, salt, hash) {
-            db.query(
-              "INSERT INTO userTable (username, password, salt, email) VALUES(?,?,?,?)",
-              [username, hash, salt, email],
-              function (error, data) {
-                if (error) throw error;
-                res.send(`<script type="text/javascript">alert("회원가입이 완료되었습니다!");
-                        document.location.href="/";</script>`);
+            userModule.create(username, hash, email, function (error, result) {
+              if (error) {
+                console.error("Error:", error);
+                res.send(
+                  '<script type="text/javascript">alert("에러 발생"); document.location.href="/auth/register";</script>'
+                );
+              } else {
+                res.send(
+                  '<script type="text/javascript">alert("회원가입 성공!"); document.location.href="/";</script>'
+                );
               }
-            );
+            });
           });
-        } else if (password != password2) {
-          // 비밀번호가 올바르게 입력되지 않은 경우
-          res.send(`<script type="text/javascript">alert("입력된 비밀번호가 서로 다릅니다."); 
-                document.location.href="/auth/register";</script>`);
+        } else if (password !== password2) {
+          // 잘못된 패스워드 입력
+          res.send(
+            '<script type="text/javascript">alert("패스워드 입력을 확인하세요."); document.location.href="/auth/register";</script>'
+          );
         } else {
-          // DB에 같은 이름의 회원아이디가 있는 경우
-          res.send(`<script type="text/javascript">alert("이미 존재하는 아이디 입니다."); 
-                document.location.href="/auth/register";</script>`);
+          // 이미 존재하는 id
+          res.send(
+            '<script type="text/javascript">alert("이미 존재하는 id"); document.location.href="/auth/register";</script>'
+          );
         }
       }
-    );
+    });
   } else {
-    // 입력되지 않은 정보가 있는 경우
-    res.send(`<script type="text/javascript">alert("입력되지 않은 정보가 있습니다."); 
-        document.location.href="/auth/register";</script>`);
+    // 입력을 확인해주세요
+    res.send(
+      '<script type="text/javascript">alert("입력을 확인해주세요"); document.location.href="/auth/register";</script>'
+    );
   }
 });
 
