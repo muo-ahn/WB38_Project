@@ -2,7 +2,9 @@ const express = require("express");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const passport = require("passport");
+const passportConfig = require("./passport/index.js");
 const LocalStrategy = require("./passport/localStrategy.js");
+const { isLoggedIn, isNotLoggedIn } = require("./router/middlewares.js");
 
 const authRouter = require("./router/auth.js");
 const fileRouter = require("./router/file.js");
@@ -24,12 +26,12 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+LocalStrategy();
+passportConfig();
 
 app.use("/auth", authRouter); // 인증 라우터
 app.use("/file", fileRouter); // 파일 라우터
 app.use("/ai", aiRouter); // ai 라우터
-
-LocalStrategy();
 
 app.get("/", (req, res) => {
   if (!authCheck.isOwner(req, res)) {
@@ -44,12 +46,7 @@ app.get("/", (req, res) => {
 });
 
 // 메인 페이지
-app.get("/main", (req, res) => {
-  if (!authCheck.isOwner(req, res)) {
-    // 로그인 안되어있으면 로그인 페이지로 이동시킴
-    res.redirect("/auth/login");
-    return false;
-  }
+app.get("/main", isLoggedIn, (req, res) => {
   var html = template.HTML(
     "Welcome",
     `<hr>

@@ -1,9 +1,11 @@
-var express = require("express");
-var router = express.Router();
-var template = require("../modules/template.js");
-var userModule = require("../modules/user.js");
-var bkfd2Password = require("pbkdf2-password");
-var hasher = bkfd2Password();
+const express = require("express");
+const router = express.Router();
+const template = require("../modules/template.js");
+const userModule = require("../modules/user.js");
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares.js");
+const bkfd2Password = require("pbkdf2-password");
+const passport = require("passport");
+const hasher = bkfd2Password();
 
 router.get("/login", function (req, res) {
   var title = "로그인";
@@ -13,7 +15,7 @@ router.get("/login", function (req, res) {
     <h2>로그인<h2>
     <form action="/auth/login_process" method="post">
     <p><input class="login" type="text" name="username" placeholder="아이디"></p>
-    <p><input class="login" type="password" name="pwd" placeholder="비밀번호"></p>
+    <p><input class="login" type="password" name="password" placeholder="비밀번호"></p>
     <p><input class="btn" type="submit" value="로그인"></p>
     </form>            
     <p>계정이 없으신가요?  <a href="/auth/register">회원가입</a></p>
@@ -23,54 +25,39 @@ router.get("/login", function (req, res) {
   res.send(html);
 });
 
-router.post("/login_process", function (req, res) {
-  var username = req.body.username;
-  var pwd = req.body.pwd;
-
-  if (username && pwd) {
-    // username pwd 검사
-    userModule.find(username, function (error, user) {
-      if (error) {
-        console.error("Error:", error);
-        res.send(
-          '<script type="text/javascript">alert("An error occurred."); document.location.href="/auth/login";</script>'
-        );
-      } else {
-        if (user) {
-          // 복호화 후 비밀번호 hash 검사
-          hasher(
-            { password: pwd, salt: user.salt },
-            function (err, pass, salt, hash) {
-              if (hash === user.password) {
-                req.session.is_logined = true; // 세션 정보 업데이트
-                req.session.nickname = username;
-                req.session.save(function () {
-                  res.redirect(`/`);
-                });
-              } else {
-                res.send(
-                  '<script type="text/javascript">alert("비밀번호 오류."); document.location.href="/auth/login";</script>'
-                );
-              }
-            }
-          );
-        } else {
-          // db에서 유저를 찾지 못한 경우
-          res.send(
-            '<script type="text/javascript">alert("존재하지 않는 id"); document.location.href="/auth/login";</script>'
-          );
-        }
+router.post("/login_process", isNotLoggedIn, (req, res, next) => {
+  passport.authenticate(
+    "local",
+    { failureRedirect: "/", failureFlash: true },
+    (authError, user, info) => {
+      if (authError) {
+        console.log(authError);
+        return next(authError);
       }
-    });
-  } else {
-    res.send(`<script type="text/javascript">alert("아이디와 비밀번호를 입력하세요!"); 
-    document.location.href="/auth/login";</script>`);
-  }
+      if (!user) {
+        return res.redirect(`/?loginError=${info.message}`);
+      }
+
+      return req.login(user, (loginError) => {
+        if (loginError) {
+          console.error(loginError);
+          return next(loginError);
+        }
+
+        return res.redirect("/");
+      });
+    }
+  )(req, res, next);
 });
 
 router.get("/logout", function (req, res) {
+  // req.session.destroy(function (err) {
+  //   res.redirect("/");
+  // });
+
+  req.logout();
   req.session.destroy(function (err) {
-    res.redirect("/");
+    req.redirect("/");
   });
 });
 

@@ -54,7 +54,6 @@ module.exports = {
       }
     });
   },
-
   verifyPassword: function (password, user, callback) {
     hasher(
       { password: password, salt: user.salt },
