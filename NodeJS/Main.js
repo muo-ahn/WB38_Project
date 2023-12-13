@@ -2,9 +2,9 @@ const express = require("express");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 
-var authRouter = require("./auth");
-var fileRouter = require("./file");
-var aiRouter = require("./ai");
+var authRouter = require("./router/auth.js");
+var fileRouter = require("./router/file.js");
+var aiRouter = require("./router/ai.js");
 
 var authCheck = require("./authCheck.js");
 var template = require("./template.js");

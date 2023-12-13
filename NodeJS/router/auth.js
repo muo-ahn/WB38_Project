@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
-var template = require("./template.js");
-var db = require("./db.js");
+var template = require("../template.js");
+var db = require("../db.js");
 var bkfd2Password = require("pbkdf2-password");
 var hasher = bkfd2Password();
 

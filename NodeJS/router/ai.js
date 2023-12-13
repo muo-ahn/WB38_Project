@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-var template = require("./template.js");
+var template = require("../template.js");
 // var result = require("./Main.js");
 
 const modulePath = "./NodeJS/AI_Module/helloworld.py";
