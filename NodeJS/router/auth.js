@@ -52,7 +52,7 @@ router.post("/login_process", loggedincheck.isNotLoggedIn, (req, res, next) => {
   )(req, res, next);
 });
 
-router.get("/logout", function (req, res) {
+router.get("/logout", loggedincheck.isLoggedIn, function (req, res) {
   req.logout(function (err) {
     req.session.destroy(function (err) {
       res.redirect("/");
