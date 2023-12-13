@@ -26,6 +26,18 @@ Node.js Middleware : https://inpa.tistory.com/
 ==================================================
 Goal
 
-Chatbot can work as a real vet{
-To make it. - Get some basic information from clients for our AI module. - Get Image data(disease of client's dog or cat) from client. - Get disease data from prediction of the AI Module. - Get Data from disease DB table of the certain disease. - Make a chat with those data.
+Chatbot can work as a real vet {
+
+    To make it.
+
+        - Get some basic information from clients for our AI module.
+
+        - Get Image data(disease of client's dog or cat) from client.
+
+        - Get disease data from prediction of the AI Module.
+
+        - Get Data from disease DB table of the certain disease.
+
+        - Make a chat with those data.
+
 }
