@@ -1,16 +1,18 @@
 const express = require("express");
 const session = require("express-session");
 const bodyParser = require("body-parser");
+const passport = require("passport");
+const LocalStrategy = require("./passport/localStrategy.js");
 
-var authRouter = require("./router/auth.js");
-var fileRouter = require("./router/file.js");
-var aiRouter = require("./router/ai.js");
+const authRouter = require("./router/auth.js");
+const fileRouter = require("./router/file.js");
+const aiRouter = require("./router/ai.js");
 
-var authCheck = require("./modules/authCheck.js");
-var template = require("./modules/template.js");
+const authCheck = require("./modules/authCheck.js");
+const template = require("./modules/template.js");
 
-var app = express();
-var port = 3005;
+const app = express();
+const port = 3005;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
@@ -20,10 +22,14 @@ app.use(
     saveUninitialized: true,
   })
 );
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/auth", authRouter); // 인증 라우터
 app.use("/file", fileRouter); // 파일 라우터
 app.use("/ai", aiRouter); // ai 라우터
+
+LocalStrategy();
 
 app.get("/", (req, res) => {
   if (!authCheck.isOwner(req, res)) {
