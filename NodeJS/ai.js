@@ -1,7 +1,9 @@
 var express = require("express");
 var router = express.Router();
 var template = require("./template.js");
-var result = require("./Main.js");
+// var result = require("./Main.js");
+
+const modulePath = "./NodeJS/AI_Module/helloworld.py";
 
 router.get("", function (req, res) {
   var title = "ai 모듈 테스트";
@@ -19,7 +21,12 @@ router.get("", function (req, res) {
 });
 
 router.post("/ai_process", function (req, res) {
-  res.send("실행 중...");
+  const { spawn } = require("child_process");
+  const result = spawn("python", [modulePath, "name test", "age test"]);
+
+  result.stdout.on("data", function (data) {
+    res.send(data.toString());
+  });
 });
 
 module.exports = router;
