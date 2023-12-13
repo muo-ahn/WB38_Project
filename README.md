@@ -16,14 +16,22 @@ Project Members : 권순호, 이현수, 김경익, 문성현, 황수영
 
 13th Dec 오전, 안동혁 : passport로 전환 시작
 
+13th Dec 오전, 안동혁 : passport, localStrategy 완료
+
+13th Dec 오전, 안동혁 :
+
 ==================================================
 참고 서적 및 사이트
 
-Node.js basic : Nomadcoder & 생활코딩
+Node.js basic :
 
-Node.js Middleware : https://inpa.tistory.com/
+- Nomadcoder : nomadcoders.co
 
-==================================================
+- 생활코딩 : gakari.tistory.com
+
+Node.js Middleware :
+
+- https://inpa.tistory.com/
 
 ==================================================
 Goal
