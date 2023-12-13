@@ -16,9 +16,9 @@ Project Members : 권순호, 이현수, 김경익, 문성현, 황수영
 
 13th Dec 오전, 안동혁 : passport로 전환 시작
 
-13th Dec 오전, 안동혁 : passport, localStrategy 완료
+13th Dec 오후, 안동혁 : passport, localStrategy 완료
 
-13th Dec 오전, 안동혁 :
+13th Dec 저녁, 안동혁 : passport, KakaoStrategy 학습
 
 ==================================================
 참고 서적 및 사이트
