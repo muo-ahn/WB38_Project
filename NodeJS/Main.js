@@ -6,8 +6,8 @@ var authRouter = require("./router/auth.js");
 var fileRouter = require("./router/file.js");
 var aiRouter = require("./router/ai.js");
 
-var authCheck = require("./authCheck.js");
-var template = require("./template.js");
+var authCheck = require("./modules/authCheck.js");
+var template = require("./modules/template.js");
 
 var app = express();
 var port = 3005;

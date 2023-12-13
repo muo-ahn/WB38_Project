@@ -3,7 +3,7 @@ var express = require("express");
 var router = express.Router();
 var multer = require("multer");
 
-const template = require("../template");
+const template = require("../modules/template");
 
 var storage = multer.diskStorage({
   destination: function (req, file, callback) {
