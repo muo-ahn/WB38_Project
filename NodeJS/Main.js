@@ -1,5 +1,14 @@
 const express = require("express");
 const session = require("express-session");
+const MySQLStore = require("express-mysql-session")(session);
+const sessionStore = new MySQLStore({
+  host: "localhost",
+  port: 3306,
+  user: "root",
+  password: "0000",
+  database: "test",
+});
+
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const passportConfig = require("./passport/index.js");
@@ -22,6 +31,7 @@ app.use(
     secret: "as321v3221sadv65q!@#ASVasd321",
     resave: false,
     saveUninitialized: true,
+    store: sessionStore,
   })
 );
 app.use(passport.initialize());

@@ -44,20 +44,19 @@ router.post("/login_process", isNotLoggedIn, (req, res, next) => {
           return next(loginError);
         }
 
-        return res.redirect("/");
+        return req.session.save(function () {
+          res.redirect("/");
+        });
       });
     }
   )(req, res, next);
 });
 
 router.get("/logout", function (req, res) {
-  // req.session.destroy(function (err) {
-  //   res.redirect("/");
-  // });
-
-  req.logout();
-  req.session.destroy(function (err) {
-    req.redirect("/");
+  req.logout(function (err) {
+    req.session.destroy(function (err) {
+      res.redirect("/");
+    });
   });
 });
 
