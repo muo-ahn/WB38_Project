@@ -24,9 +24,15 @@ Node.js basic : Nomadcoder & 생활코딩
 Node.js Middleware : https://inpa.tistory.com/
 
 ==================================================
+
+==================================================
 Goal
 
-Chatbot can work as a real vet {
+1.  안구, 피부, 복부, 흉부, 근골격 데이터 학습
+
+    - 현재 안구와 피부 진행 중.
+
+2.  Chatbot can work as a real vet {
 
     To make it.
 
