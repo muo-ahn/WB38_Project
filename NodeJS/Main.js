@@ -13,7 +13,7 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const passportConfig = require("./passport/index.js");
 const LocalStrategy = require("./passport/localStrategy.js");
-const { isLoggedIn, isNotLoggedIn } = require("./router/middlewares.js");
+const loggedincheck = require("./router/middlewares.js");
 
 const authRouter = require("./router/auth.js");
 const fileRouter = require("./router/file.js");
@@ -56,7 +56,7 @@ app.get("/", (req, res) => {
 });
 
 // 메인 페이지
-app.get("/main", isLoggedIn, (req, res) => {
+app.get("/main", loggedincheck.isLoggedIn, (req, res) => {
   var html = template.HTML(
     "Welcome",
     `<hr>
