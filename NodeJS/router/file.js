@@ -10,7 +10,14 @@ var storage = multer.diskStorage({
     callback(null, "./NodeJS/uploadFiles/"); //파일 저장 디렉토리
   },
   filename: function (req, file, callback) {
-    callback(null, Date.now() + "_" + file.originalname);
+    callback(
+      null,
+      req.session.passport.user.username +
+        "_" +
+        Date.now() +
+        "_" +
+        file.originalname
+    );
   },
 });
 
@@ -35,11 +42,6 @@ router.get("", function (req, res) {
 router.post("/file_process", upload.single("uploadfile"), function (req, res) {
   try {
     var file = req.file;
-
-    var originalName = file.originalname;
-    var fileName = file.filename;
-    var mimeType = file.mimetype;
-    var size = file.size;
 
     res.send(`
     <script type="text/javascript">alert("파일업로드가 완료되었습니다.!");
