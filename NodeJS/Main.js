@@ -1,12 +1,14 @@
+require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
+
 const express = require("express");
 const session = require("express-session");
 const MySQLStore = require("express-mysql-session")(session);
 const sessionStore = new MySQLStore({
   host: "localhost",
-  port: 3306,
-  user: "root",
-  password: "0000",
-  database: "test",
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
 });
 
 const bodyParser = require("body-parser");
@@ -28,7 +30,7 @@ const port = 3005;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
   session({
-    secret: "as321v3221sadv65q!@#ASVasd321",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     store: sessionStore,
