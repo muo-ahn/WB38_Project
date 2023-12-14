@@ -20,7 +20,7 @@ Project Members : 권순호, 이현수, 김경익, 문성현, 황수영
 
 13th Dec 저녁, 안동혁 : passport, KakaoStrategy 학습
 
-14th Dec 오전, 안동혁 : Node.js process.env 환경 변수 설정
+14th Dec 오전, 안동혁 : Node.js process.env 환경 변수 설정, password hashing 오류 해결
 
 ==================================================
 참고 서적 및 사이트
