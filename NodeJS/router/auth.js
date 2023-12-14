@@ -28,7 +28,7 @@ router.get("/login", function (req, res) {
 router.post("/login_process", loggedincheck.isNotLoggedIn, (req, res, next) => {
   passport.authenticate(
     "local",
-    { failureRedirect: "/", failureFlash: true },
+    { failureRedirect: "/login", failureFlash: true },
     (authError, user, info) => {
       if (authError) {
         console.log(authError);
@@ -99,25 +99,24 @@ router.post(
         } else {
           if (!user && password === password2) {
             // 존재하지 않는 id이므로 복호화 후, 회원가입 시도
-            hasher({ password: password }, function (err, pass, salt, hash) {
-              userModule.create(
-                username,
-                hash,
-                email,
-                function (error, result) {
-                  if (error) {
-                    console.error("Error:", error);
-                    res.send(
-                      '<script type="text/javascript">alert("에러 발생"); document.location.href="/auth/register";</script>'
-                    );
-                  } else {
-                    res.send(
-                      '<script type="text/javascript">alert("회원가입 성공!"); document.location.href="/";</script>'
-                    );
-                  }
+            userModule.create(
+              username,
+              password,
+              email,
+              function (error, result, salt) {
+                if (error) {
+                  console.error("Error:", error);
+                  res.send(
+                    '<script type="text/javascript">alert("에러 발생"); document.location.href="/auth/register";</script>'
+                  );
+                } else {
+                  console.log("Salt value:", salt);
+                  res.send(
+                    '<script type="text/javascript">alert("회원가입 성공!"); document.location.href="/";</script>'
+                  );
                 }
-              );
-            });
+              }
+            );
           } else if (password !== password2) {
             // 잘못된 패스워드 입력
             res.send(

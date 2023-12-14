@@ -41,6 +41,7 @@ module.exports = {
         } else {
           //해당 username으로 이루어진 객체가 없음
           hasher({ password: pwd }, function (err, pass, salt, hash) {
+            console.log("craete user hash : " + hash);
             db.query(
               "INSERT INTO userTable (username, password, salt, email) VALUES(?,?,?,?)",
               [username, hash, salt, email],
@@ -48,7 +49,7 @@ module.exports = {
                 if (error) {
                   callback("Error : ", error);
                 } else {
-                  callback(null, "회원가입 성공");
+                  callback(null, "회원가입 성공", salt);
                 }
               }
             );
@@ -61,6 +62,7 @@ module.exports = {
     hasher(
       { password: password, salt: user.salt },
       function (err, pass, salt, hash) {
+        console.log("verifyPassword hash : " + hash);
         if (err) {
           return callback(err);
         }
