@@ -3,9 +3,7 @@ const router = express.Router();
 const template = require("../models/template.js");
 const userModule = require("../models/userClass.js");
 const loggedincheck = require("./middlewares.js");
-const bkfd2Password = require("pbkdf2-password");
 const passport = require("passport");
-const hasher = bkfd2Password();
 
 router.get("/login", loggedincheck.isNotLoggedIn, function (req, res) {
   var title = "로그인";
