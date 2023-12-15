@@ -28,6 +28,22 @@ class File {
 
   createUserHistory(username, image, petname, petbreed, callback) {
     this.db.query(
+      // 이런 형식으로 보내주어야 함...
+      // INSERT INTO userHistory (username, image, petname, petbreed)
+      // VALUES (
+      //   NULL,
+      //   'uploadfile',
+      //   'starry-sky-8199764_1280.jpg',
+      //   '7bit',
+      //   'image/jpeg',
+      //   './NodeJS/uploadFiles/',
+      //   'ahn_1702622408767_starry-sky-8199764_1280.jpg',
+      //   'NodeJS\\\\uploadFiles\\\\ahn_1702622408767_starry-sky-8199764_1280.jpg',
+      //   290197,
+      //   NULL,
+      //   NULL
+      // )
+
       "INSERT INTO userHistory (username, image, petname, petbreed) VALUES(?,?,?,?)",
       [username, image, petname, petbreed],
       (error, data) => {
