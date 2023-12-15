@@ -74,7 +74,7 @@ router.post("/file_process", upload.single("uploadfile"), function (req, res) {
 });
 
 router.get("/print", function (req, res) {
-  var image = req.file;
+  var image = req.session.file;
   console.log(image);
 });
 

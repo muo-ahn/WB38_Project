@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const template = require("../models/template.js");
-const userModule = require("../models/user.js");
+const userModule = require("../models/userClass.js");
 const loggedincheck = require("./middlewares.js");
 const bkfd2Password = require("pbkdf2-password");
 const passport = require("passport");
@@ -86,7 +86,6 @@ router.post("/register_process", function (req, res) {
   var email = req.body.email;
 
   if (username && password && password2) {
-    // 입력 확인
     userModule.find(username, function (error, user) {
       if (error) {
         console.error("Error:", error);
