@@ -10,7 +10,6 @@ module.exports = () => {
         passwordField: "password", //req.body.password
       },
       async function (username, password, done) {
-        console.log("Local Strategy:", username, password);
         userModule.find(username, function (error, user) {
           if (error) {
             return done(error);

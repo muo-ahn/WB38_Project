@@ -106,7 +106,6 @@ router.post("/register_process", function (req, res) {
                   '<script type="text/javascript">alert("에러 발생"); document.location.href="/auth/register";</script>'
                 );
               } else {
-                console.log("Salt value:", salt);
                 res.send(
                   '<script type="text/javascript">alert("회원가입 성공!"); document.location.href="/";</script>'
                 );

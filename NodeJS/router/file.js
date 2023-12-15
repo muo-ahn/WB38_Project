@@ -31,7 +31,7 @@ router.get("", function (req, res) {
   var html = template.HTML(
     title,
     `
-      <form action="/file/file_process" method="post" enctype='multipart/form-data'>
+      <form action="/file/" method="post" enctype='multipart/form-data'>
       <p><input type="file" value="파일선택" name="uploadfile" multiple/></p>
       <input type="submit" value="파일업로드"/>
       </form>
@@ -41,14 +41,14 @@ router.get("", function (req, res) {
   res.send(html);
 });
 
-router.post("/file_process", upload.single("uploadfile"), function (req, res) {
+router.post("/", upload.single("uploadfile"), function (req, res) {
   try {
     var postHTML = template.HTML(
       "파일 업로드 실패",
       `
       <script type="text/javascript">
       alert("파일을 선택해주세요.");
-      document.location.href="/";
+      document.location.href="/file";
       </script>
       `,
       authCheck.statusUI(req, res)
@@ -75,7 +75,6 @@ router.post("/file_process", upload.single("uploadfile"), function (req, res) {
 
 router.get("/print", function (req, res) {
   var image = req.session.file;
-  console.log(image);
 });
 
 module.exports = router;

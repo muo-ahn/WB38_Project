@@ -1,6 +1,6 @@
 require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
-
 const mysql = require("mysql");
+
 const bkfd2Password = require("pbkdf2-password");
 const hasher = bkfd2Password();
 
@@ -40,7 +40,6 @@ class User {
           callback("ID exist : ", null);
         } else {
           hasher({ password: pwd }, (err, pass, salt, hash) => {
-            console.log("create user hash : " + hash);
             this.db.query(
               "INSERT INTO userTable (username, password, salt, email) VALUES(?,?,?,?)",
               [username, hash, salt, email],
@@ -60,7 +59,6 @@ class User {
 
   verifyPassword(password, user, callback) {
     hasher({ password: password, salt: user.salt }, (err, pass, salt, hash) => {
-      console.log("verifyPassword hash : " + hash);
       if (err) {
         return callback(err);
       }
