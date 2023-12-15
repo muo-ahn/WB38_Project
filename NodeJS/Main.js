@@ -21,8 +21,8 @@ const authRouter = require("./router/auth.js");
 const fileRouter = require("./router/file.js");
 const aiRouter = require("./router/ai.js");
 
-const authCheck = require("./modules/authCheck.js");
-const template = require("./modules/template.js");
+const authCheck = require("./models/authCheck.js");
+const template = require("./models/template.js");
 
 const app = express();
 const port = 3005;
