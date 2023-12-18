@@ -43,8 +43,8 @@ router.get("", loggedincheck.isLoggedIn, function (req, res) {
       images.forEach((image, index) => {
         imageHTML += `
         <div>
-          <p class="text">${results[0].petname}</p>
-          <p class="text">${results[0].usertext}</p>
+          <p class="text">${results[index].petname}</p>
+          <p class="text">${results[index].usertext}</p>
           <img src="data:image/png;base64,${image}" 
           alt="Image ${index + 1}" 
           width="${width}"/>
