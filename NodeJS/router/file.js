@@ -8,6 +8,7 @@ const loggedincheck = require("./middlewares.js");
 
 const authCheck = require("../models/authCheck.js");
 const template = require("../models/template.js");
+const e = require("express");
 
 var storage = multer.diskStorage({
   destination: function (req, file, callback) {
@@ -92,12 +93,16 @@ router.get("/upload", loggedincheck.isLoggedIn, function (req, res) {
 router.post("/upload", upload.array("uploadfile", 2), function (req, res) {
   try {
     var postHTML;
-    if (!req.files) {
+
+    const areAllImages = req.files.every((file) =>
+      file.mimetype.startsWith("image/")
+    );
+    if (areAllImages || !req.files) {
       postHTML = template.HTML(
         "이미지 업로드 실패",
         `
         <script type="text/javascript">
-        alert("이미지를 선택해주세요.");
+        alert("입력 파일 확인.");
         document.location.href="/file";
         </script>
         `,
@@ -107,7 +112,6 @@ router.post("/upload", upload.array("uploadfile", 2), function (req, res) {
       return;
     }
 
-    // db에 저장(create)
     fileModule.createUserHistory(
       req.user.username,
       req.files,
