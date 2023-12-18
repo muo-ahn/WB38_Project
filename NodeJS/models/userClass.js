@@ -39,19 +39,35 @@ class User {
         if (user) {
           callback("ID exist : ", user);
         } else {
-          hasher({ password: pwd }, (err, pass, salt, hash) => {
+          if (provider == "local" && pwd) {
+            // local Strategy
+            hasher({ password: pwd }, (err, pass, salt, hash) => {
+              this.db.query(
+                "INSERT INTO userTable (username, password, salt, email, provider) VALUES(?,?,?,?,?)",
+                [username, hash, salt, email, provider],
+                (error, data) => {
+                  if (error) {
+                    callback("Error : ", error);
+                  } else {
+                    callback(null, "회원가입 성공");
+                  }
+                }
+              );
+            });
+          } else {
+            // Third party Strategy
             this.db.query(
-              "INSERT INTO userTable (username, password, salt, email, provider) VALUES(?,?,?,?,?)",
-              [username, hash, salt, email, provider],
+              "INSERT INTO userTable (username, email, provider) VALUES (?,?,?)",
+              [username, email, provider],
               (error, data) => {
                 if (error) {
-                  callback("Error : ", error);
+                  callback("Error: ", error);
                 } else {
-                  callback(null, "회원가입 성공");
+                  callback(null, "User created successfully");
                 }
               }
             );
-          });
+          }
         }
       }
     });

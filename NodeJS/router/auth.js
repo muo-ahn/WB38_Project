@@ -51,7 +51,18 @@ router.post("/login_process", (req, res, next) => {
   )(req, res, next);
 });
 
-router.get("/kakao");
+// router.get("/kakao", passport.authenticate("kakao"));
+
+// router.get(
+//   "/kakao/callback",
+//   passport.authenticate("kakao", {
+//     failureRedirect: "/",
+//   }),
+//   // when kakao strategy is success
+//   (req, res) => {
+//     res.redirect("/");
+//   }
+// );
 
 router.get("/logout", loggedincheck.isLoggedIn, function (req, res) {
   req.logout(function (err) {
