@@ -92,7 +92,7 @@ router.get("/upload", loggedincheck.isLoggedIn, function (req, res) {
 router.post("/upload", upload.array("uploadfile", 2), function (req, res) {
   try {
     var postHTML;
-    if (!req.body.files) {
+    if (!req.files) {
       postHTML = template.HTML(
         "이미지 업로드 실패",
         `
