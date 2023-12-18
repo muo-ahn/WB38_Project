@@ -29,35 +29,36 @@ var upload = multer({
   storage: storage,
 });
 
-router.get("", function (req, res) {
+router.get("", loggedincheck.isLoggedIn, function (req, res) {
   var title = "파일 업로드";
 
   //template에 find로 찾아온 정보 같이 껴주기.
-  fileModule.gethistoryid(req.username, function (error, images, historyids) {
-    console.log(images);
-    console.log(historyids);
-
-    var imageHTML = "";
-    images.forEach((image, index) => {
-      imageHTML += `
+  fileModule.gethistoryid(
+    req.user.username,
+    function (error, images, historyids) {
+      if (error) throw error;
+      var imageHTML = "";
+      images.forEach((image, index) => {
+        imageHTML += `
       <img src="data:image/png;base64,${image}" 
       alt="Image ${index + 1}" />
       `;
-    });
+      });
 
-    var html = template.HTML(
-      title,
-      `
+      var html = template.HTML(
+        title,
+        `
         <form action="/file/" method="post" enctype='multipart/form-data'>
         <p><input type="file" value="파일선택" name="uploadfile" multiple/></p>
         <input type="submit" value="파일업로드"/>
         </form>
         ${imageHTML} <!-- Display images here -->
         `,
-      authCheck.statusUI(req, res)
-    );
-    res.send(html);
-  });
+        authCheck.statusUI(req, res)
+      );
+      res.send(html);
+    }
+  );
 });
 
 //
@@ -85,7 +86,8 @@ router.post("/", upload.single("uploadfile"), function (req, res) {
       req.file,
       null,
       null,
-      function (error, result) {
+      function (error, historyid) {
+        console.log("id : " + historyid);
         if (error) {
           console.error("Error:", error);
           postHTML = template.HTML(

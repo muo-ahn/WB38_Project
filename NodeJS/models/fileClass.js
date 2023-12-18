@@ -1,5 +1,7 @@
 require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
 const mysql = require("mysql");
+const fs = require("fs");
+const { use } = require("passport");
 
 class File {
   constructor() {
@@ -14,36 +16,35 @@ class File {
   }
 
   gethistoryid(username, callback) {
+    console.log("username : " + username);
     this.db.query(
       "SELECT * FROM userHistory where username = ?",
       [username],
-      (error, results, fields) => {
-        if (error) throw error;
-        const images = results.map((results) => results.image);
-        const historyids = results.map((results) => results.historyid);
-        callback(null, images, historyids);
+      (error, results) => {
+        if (error) return callback(error);
+        console.log("raw results : " + results);
+
+        if (results.length > 0) {
+          console.log("first raw result : " + results[0]);
+        }
+
+        const encodedImages = results.map((result) => {
+          return result.image.toString("base64");
+        });
+        callback(null, encodedImages);
       }
     );
   }
 
   createUserHistory(username, image, petname, petbreed, callback) {
+    const imageData = fs.readFileSync(image.path);
+
     this.db.query(
       "INSERT INTO userHistory (username, image, petname, petbreed) VALUES(?,?,?,?)",
-      [
-        username,
-        image.fieldname,
-        image.originalname,
-        image.encoding,
-        image.mimetype,
-        image.destination,
-        image.filename,
-        image.path,
-        image.size,
-        petname,
-        petbreed,
-      ],
+      [username, imageData, petname, petbreed],
       (error, data) => {
-        if (error) throw error;
+        if (error) return callback(error);
+
         const historyid = data.insertId;
         callback(null, historyid);
       }
