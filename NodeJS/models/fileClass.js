@@ -16,17 +16,11 @@ class File {
   }
 
   gethistoryid(username, callback) {
-    console.log("username : " + username);
     this.db.query(
       "SELECT * FROM userHistory where username = ?",
       [username],
       (error, results) => {
         if (error) return callback(error);
-        console.log("raw results : " + results);
-
-        if (results.length > 0) {
-          console.log("first raw result : " + results[0]);
-        }
 
         const encodedImages = results.map((result) => {
           return result.image.toString("base64");

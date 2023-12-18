@@ -30,6 +30,7 @@ var upload = multer({
 });
 
 router.get("", loggedincheck.isLoggedIn, function (req, res) {
+  const width = 200;
   var title = "파일 업로드";
 
   //template에 find로 찾아온 정보 같이 껴주기.
@@ -41,7 +42,9 @@ router.get("", loggedincheck.isLoggedIn, function (req, res) {
       images.forEach((image, index) => {
         imageHTML += `
       <img src="data:image/png;base64,${image}" 
-      alt="Image ${index + 1}" />
+      alt="Image ${index + 1}" 
+      width="${width}"
+      />
       `;
       });
 
@@ -51,6 +54,7 @@ router.get("", loggedincheck.isLoggedIn, function (req, res) {
         <form action="/file/" method="post" enctype='multipart/form-data'>
         <p><input type="file" value="파일선택" name="uploadfile" multiple/></p>
         <input type="submit" value="파일업로드"/>
+        <h3>업로드 목록</h3>
         </form>
         ${imageHTML} <!-- Display images here -->
         `,
