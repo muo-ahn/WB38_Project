@@ -10,7 +10,7 @@ module.exports = () => {
         passwordField: "password", //req.body.password
       },
       async function (username, password, done) {
-        userModule.find(username, function (error, user) {
+        userModule.find(username, "local", function (error, user) {
           if (error) {
             return done(error);
           }

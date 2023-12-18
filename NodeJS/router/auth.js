@@ -15,6 +15,7 @@ router.get("/login", loggedincheck.isNotLoggedIn, function (req, res) {
     <p><input class="login" type="text" name="username" placeholder="아이디"></p>
     <p><input class="login" type="password" name="password" placeholder="비밀번호"></p>
     <p><input class="btn" type="submit" value="로그인"></p>
+    <p><a id="kakao" href="/auth/kakao" class="btn">카카오톡 로그인</a>
     </form>            
     <p>계정이 없으신가요?  <a href="/auth/register">회원가입</a></p>
     `,
@@ -50,6 +51,8 @@ router.post("/login_process", (req, res, next) => {
   )(req, res, next);
 });
 
+router.get("/kakao");
+
 router.get("/logout", loggedincheck.isLoggedIn, function (req, res) {
   req.logout(function (err) {
     req.session.destroy(function (err) {
@@ -77,6 +80,7 @@ router.get("/register", loggedincheck.isNotLoggedIn, function (req, res) {
   );
   res.send(html);
 });
+
 router.post("/register_process", function (req, res) {
   var username = req.body.username;
   var password = req.body.pwd;
@@ -84,50 +88,36 @@ router.post("/register_process", function (req, res) {
   var email = req.body.email;
 
   if (username && password && password2) {
-    userModule.find(username, function (error, user) {
-      if (error) {
-        console.error("Error:", error);
-        res.send(
-          '<script type="text/javascript">alert("에러 발생"); document.location.href="/auth/register";</script>'
-        );
-      } else {
-        if (!user && password === password2) {
-          // 존재하지 않는 id이므로 복호화 후, 회원가입 시도
-          userModule.create(
-            username,
-            password,
-            email,
-            function (error, result, salt) {
-              if (error) {
-                console.error("Error:", error);
-                res.send(
-                  '<script type="text/javascript">alert("에러 발생"); document.location.href="/auth/register";</script>'
-                );
-              } else {
-                res.send(
-                  '<script type="text/javascript">alert("회원가입 성공!"); document.location.href="/";</script>'
-                );
-              }
-            }
-          );
-        } else if (password !== password2) {
-          // 잘못된 패스워드 입력
-          res.send(
-            '<script type="text/javascript">alert("패스워드 입력을 확인하세요."); document.location.href="/auth/register";</script>'
-          );
-        } else {
-          // 이미 존재하는 id
-          res.send(
-            '<script type="text/javascript">alert("이미 존재하는 id"); document.location.href="/auth/register";</script>'
-          );
+    if (password === password2) {
+      userModule.create(
+        username,
+        password,
+        email,
+        "local",
+        function (error, result, salt) {
+          if (error) {
+            console.error("Error:", error);
+            res.send(
+              '<script type="text/javascript">alert("에러 발생"); document.location.href="/auth/register";</script>'
+            );
+          } else {
+            res.send(
+              '<script type="text/javascript">alert("회원가입 성공!"); document.location.href="/";</script>'
+            );
+          }
         }
-      }
-    });
-  } else {
-    // 입력을 확인해주세요
-    res.send(
-      '<script type="text/javascript">alert("입력을 확인해주세요"); document.location.href="/auth/register";</script>'
-    );
+      );
+    } else if (password !== password2) {
+      // 잘못된 패스워드 입력
+      res.send(
+        '<script type="text/javascript">alert("패스워드 입력을 확인하세요."); document.location.href="/auth/register";</script>'
+      );
+    } else {
+      // 이미 존재하는 id
+      res.send(
+        '<script type="text/javascript">alert("이미 존재하는 id"); document.location.href="/auth/register";</script>'
+      );
+    }
   }
 });
 

@@ -32,7 +32,6 @@ var upload = multer({
 
 router.get("", loggedincheck.isLoggedIn, function (req, res) {
   const width = 200;
-  var title = "이미지";
 
   //template에 find로 찾아온 정보 같이 껴주기.
   fileModule.getUserHistory(
@@ -57,7 +56,7 @@ router.get("", loggedincheck.isLoggedIn, function (req, res) {
         "업로드 목록",
         `
         <form action="/file/upload" method="get">
-          <input type="submit" value="업로드 요청"/>
+          <input class="btn" type="submit" value="업로드 요청"/>
         </form>
         ${imageHTML}
         `,
@@ -82,7 +81,7 @@ router.get("/upload", loggedincheck.isLoggedIn, function (req, res) {
       </select>
     </p>
     <p><input type="text" value="상담 내용 입력" name="usertext"/></p>
-    <input type="submit" value="이미지 업로드"/>
+    <input class="btn" type="submit" value="이미지 업로드"/>
     </form>
     `,
     authCheck.statusUI(req, res)

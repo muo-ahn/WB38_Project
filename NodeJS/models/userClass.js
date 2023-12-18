@@ -16,10 +16,10 @@ class User {
     this.db.connect();
   }
 
-  find(username, callback) {
+  find(username, provider, callback) {
     this.db.query(
-      "SELECT * FROM userTable WHERE username = ?",
-      [username],
+      "SELECT * FROM userTable WHERE username = ? AND provider = ?",
+      [username, provider],
       (error, results, fields) => {
         if (error) throw error;
         if (results.length > 0) {
@@ -31,18 +31,18 @@ class User {
     );
   }
 
-  create(username, pwd, email, callback) {
-    this.find(username, (error, user) => {
+  create(username, pwd, email, provider, callback) {
+    this.find(username, provider, (error, user) => {
       if (error) {
         callback("Error : ", error);
       } else {
         if (user) {
-          callback("ID exist : ", null);
+          callback("ID exist : ", user);
         } else {
           hasher({ password: pwd }, (err, pass, salt, hash) => {
             this.db.query(
-              "INSERT INTO userTable (username, password, salt, email) VALUES(?,?,?,?)",
-              [username, hash, salt, email],
+              "INSERT INTO userTable (username, password, salt, email, provider) VALUES(?,?,?,?,?)",
+              [username, hash, salt, email, provider],
               (error, data) => {
                 if (error) {
                   callback("Error : ", error);
