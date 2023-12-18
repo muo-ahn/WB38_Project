@@ -2,6 +2,7 @@ require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
 const mysql = require("mysql");
 const fs = require("fs");
 const util = require("util");
+const { error } = require("console");
 
 class File {
   constructor() {

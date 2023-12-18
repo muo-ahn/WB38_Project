@@ -6,8 +6,8 @@ var multer = require("multer");
 const fileModule = require("../models/fileClass.js");
 const loggedincheck = require("./middlewares.js");
 
-const authCheck = require("../models/authCheck");
-const template = require("../models/template");
+const authCheck = require("../models/authCheck.js");
+const template = require("../models/template.js");
 
 var storage = multer.diskStorage({
   destination: function (req, file, callback) {
@@ -92,7 +92,7 @@ router.get("/upload", loggedincheck.isLoggedIn, function (req, res) {
 router.post("/upload", upload.array("uploadfile", 2), function (req, res) {
   try {
     var postHTML;
-    if (!req.files) {
+    if (!req.body.files) {
       postHTML = template.HTML(
         "이미지 업로드 실패",
         `
