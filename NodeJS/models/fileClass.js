@@ -1,7 +1,7 @@
 require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
 const mysql = require("mysql");
 const fs = require("fs");
-const { use } = require("passport");
+const util = require("util");
 
 class File {
   constructor() {
@@ -30,19 +30,30 @@ class File {
     );
   }
 
-  createUserHistory(username, images, petname, petbreed, callback) {
-    images.forEach((image) => {
-      const imageData = fs.readFileSync(image.path);
+  createUserHistory(username, images, petname, petbreed, usertext, callback) {
+    // async
+    const insertImages = async () => {
+      for (const image of images) {
+        const imageData = fs.readFileSync(image.path);
+        const queryAsync = util.promisify(this.db.query).bind(this.db);
 
-      this.db.query(
-        "INSERT INTO userHistory (username, image, petname, petbreed) VALUES(?,?,?,?)",
-        [username, imageData, petname, petbreed],
-        (error, data) => {
-          if (error) throw callback(error);
+        try {
+          const data = await queryAsync(
+            "INSERT INTO userHistory (username, image, petname, petbreed, usertext) VALUES(?,?,?,?,?)",
+            [username, imageData, petname, petbreed, usertext]
+          );
+
+          console.log(data);
+        } catch (error) {
+          console.error(error);
+          return callback(error);
         }
-      );
-    });
-    return callback(null);
+      }
+
+      return callback(null);
+    };
+
+    insertImages();
   }
 }
 

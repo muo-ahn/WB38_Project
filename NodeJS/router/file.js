@@ -60,7 +60,7 @@ router.get("", loggedincheck.isLoggedIn, function (req, res) {
             <option value="cat">반려묘</option>
           </select>
         </p>
-        <p><input type="text" value="상담 내용 입력" name="uploadtext"/></p>
+        <p><input type="text" value="상담 내용 입력" name="usertext"/></p>
         <input type="submit" value="이미지 업로드"/>
         <h3>업로드 목록</h3>
         </form>
@@ -97,6 +97,7 @@ router.post("/", upload.array("uploadfile", 2), function (req, res) {
       req.files,
       req.body.petname,
       req.body.petbreed,
+      req.body.usertext,
       function (error, historyid) {
         if (error) {
           console.error("Error:", error);
