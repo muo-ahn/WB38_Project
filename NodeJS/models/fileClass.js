@@ -30,19 +30,19 @@ class File {
     );
   }
 
-  createUserHistory(username, image, petname, petbreed, callback) {
-    const imageData = fs.readFileSync(image.path);
+  createUserHistory(username, images, petname, petbreed, callback) {
+    images.forEach((image) => {
+      const imageData = fs.readFileSync(image.path);
 
-    this.db.query(
-      "INSERT INTO userHistory (username, image, petname, petbreed) VALUES(?,?,?,?)",
-      [username, imageData, petname, petbreed],
-      (error, data) => {
-        if (error) return callback(error);
-
-        const historyid = data.insertId;
-        callback(null, historyid);
-      }
-    );
+      this.db.query(
+        "INSERT INTO userHistory (username, image, petname, petbreed) VALUES(?,?,?,?)",
+        [username, imageData, petname, petbreed],
+        (error, data) => {
+          if (error) throw callback(error);
+        }
+      );
+    });
+    return callback(null);
   }
 }
 

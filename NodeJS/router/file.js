@@ -31,7 +31,7 @@ var upload = multer({
 
 router.get("", loggedincheck.isLoggedIn, function (req, res) {
   const width = 200;
-  var title = "파일 업로드";
+  var title = "이미지 업로드";
 
   //template에 find로 찾아온 정보 같이 껴주기.
   fileModule.gethistoryid(
@@ -52,8 +52,16 @@ router.get("", loggedincheck.isLoggedIn, function (req, res) {
         title,
         `
         <form action="/file/" method="post" enctype='multipart/form-data'>
-        <p><input type="file" value="파일선택" name="uploadfile" multiple/></p>
-        <input type="submit" value="파일업로드"/>
+        <p><input type="file" value="이미지 선택" name="uploadfile" multiple/></p>
+        <p><input type="text" value="반려동물 이름 입력" name="petname"/></p>
+        <p>
+          <select name="petbreed">
+            <option value="dog">반려견</option>
+            <option value="cat">반려묘</option>
+          </select>
+        </p>
+        <p><input type="text" value="상담 내용 입력" name="uploadtext"/></p>
+        <input type="submit" value="이미지 업로드"/>
         <h3>업로드 목록</h3>
         </form>
         ${imageHTML} <!-- Display images here -->
@@ -65,16 +73,15 @@ router.get("", loggedincheck.isLoggedIn, function (req, res) {
   );
 });
 
-//
-router.post("/", upload.single("uploadfile"), function (req, res) {
+router.post("/", upload.array("uploadfile", 2), function (req, res) {
   try {
     var postHTML;
-    if (!req.file) {
+    if (!req.files) {
       postHTML = template.HTML(
-        "파일 업로드 실패",
+        "이미지 업로드 실패",
         `
         <script type="text/javascript">
-        alert("파일을 선택해주세요.");
+        alert("이미지를 선택해주세요.");
         document.location.href="/file";
         </script>
         `,
@@ -87,18 +94,17 @@ router.post("/", upload.single("uploadfile"), function (req, res) {
     // db에 저장(create)
     fileModule.createUserHistory(
       req.user.username,
-      req.file,
-      null,
-      null,
+      req.files,
+      req.body.petname,
+      req.body.petbreed,
       function (error, historyid) {
-        console.log("id : " + historyid);
         if (error) {
           console.error("Error:", error);
           postHTML = template.HTML(
-            "파일 업로드 실패",
+            "이미지 업로드 실패",
             `
                 <script type="text/javascript">
-                alert("파일 업로드 실패.");
+                alert("이미지 업로드 실패.");
                 document.location.href="/file";
                 </script>
                 `,
@@ -107,10 +113,10 @@ router.post("/", upload.single("uploadfile"), function (req, res) {
         } else {
           console.log("File uploaded successfully");
           postHTML = template.HTML(
-            "파일 업로드 성공",
+            "이미지 업로드 성공",
             `
                 <script type="text/javascript">
-                alert("파일 업로드 성공.");
+                alert("이미지 업로드 성공.");
                 document.location.href="/file";
                 </script>
                 `,
