@@ -11,9 +11,9 @@ const template = require("../models/template.js");
 const e = require("express");
 
 var storage = multer.diskStorage({
-  destination: function (req, file, callback) {
-    callback(null, "./NodeJS/uploadFiles/"); //파일 저장 디렉토리
-  },
+  // destination: function (req, file, callback) {
+  //   callback(null, "./NodeJS/uploadFiles/"); //파일 저장 디렉토리
+  // },
   filename: function (req, file, callback) {
     callback(
       null,
@@ -93,11 +93,11 @@ router.get("/upload", loggedincheck.isLoggedIn, function (req, res) {
 router.post("/upload", upload.array("uploadfile", 2), function (req, res) {
   try {
     var postHTML;
-
     const areAllImages = req.files.every((file) =>
       file.mimetype.startsWith("image/")
     );
-    if (areAllImages || !req.files) {
+
+    if (!areAllImages || !req.files) {
       postHTML = template.HTML(
         "이미지 업로드 실패",
         `
