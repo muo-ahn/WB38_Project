@@ -64,7 +64,7 @@ app.get("/main", loggedincheck.isLoggedIn, (req, res) => {
     `<hr>
     <h2>메인 페이지에 오신 것을 환영합니다</h2>
     <p>로그인에 성공하셨습니다.</p>
-    <a href="/file">FileUpload</a>
+    <a href="/file">진찰 의뢰</a>
     <a href="/ai">AI Module</a>
     `,
     authCheck.statusUI(req, res)

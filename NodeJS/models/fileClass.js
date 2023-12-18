@@ -15,7 +15,7 @@ class File {
     this.db.connect();
   }
 
-  gethistoryid(username, callback) {
+  getUserHistory(username, callback) {
     this.db.query(
       "SELECT * FROM userHistory where username = ?",
       [username],
@@ -25,7 +25,7 @@ class File {
         const encodedImages = results.map((result) => {
           return result.image.toString("base64");
         });
-        callback(null, encodedImages);
+        callback(null, encodedImages, results);
       }
     );
   }
