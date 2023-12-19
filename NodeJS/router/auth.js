@@ -52,7 +52,11 @@ router.post("/login_process", (req, res, next) => {
   )(req, res, next);
 });
 
-router.get("/kakao", passport.authenticate("kakao"));
+router.get(
+  "/kakao",
+  loggedincheck.isNotLoggedIn,
+  passport.authenticate("kakao")
+);
 
 router.get(
   "/kakao/callback",
@@ -65,7 +69,11 @@ router.get(
   }
 );
 
-router.get("/naver", passport.authenticate("naver"));
+router.get(
+  "/naver",
+  loggedincheck.isNotLoggedIn,
+  passport.authenticate("naver")
+);
 
 router.get(
   "/naver/callback",
