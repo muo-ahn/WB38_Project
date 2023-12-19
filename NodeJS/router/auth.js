@@ -16,6 +16,7 @@ router.get("/login", loggedincheck.isNotLoggedIn, function (req, res) {
     <p><input class="login" type="password" name="password" placeholder="비밀번호"></p>
     <p><input class="btn" type="submit" value="로그인"></p>
     <p><a id="kakao" href="/auth/kakao" class="btn">카카오톡 로그인</a>
+    <p><a id="naver" href="/auth/naver" class="btn">네이버 로그인</a>
     </form>            
     <p>계정이 없으신가요?  <a href="/auth/register">회원가입</a></p>
     `,
@@ -59,6 +60,18 @@ router.get(
     failureRedirect: "/auth/login",
   }),
   // when kakao strategy is success
+  (req, res) => {
+    res.redirect("/");
+  }
+);
+
+router.get("/naver", passport.authenticate("naver"));
+
+router.get(
+  "/naver/callback",
+  passport.authenticate("naver", {
+    failureRedirect: "/auth/login",
+  }),
   (req, res) => {
     res.redirect("/");
   }

@@ -9,6 +9,7 @@
     "passport-facebook": "^3.0.0",
     "passport-kakao": "^1.0.1",
     "passport-local": "^1.0.0",
+    "passport-naver-v2": "^2.0.8",
     "pbkdf2-password": "^1.2.1",
     "python-shell": "^5.0.0"
   }

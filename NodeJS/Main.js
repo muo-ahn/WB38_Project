@@ -16,6 +16,7 @@ const passport = require("passport");
 const passportConfig = require("./passport/index.js");
 const LocalStrategy = require("./passport/localStrategy.js");
 const KakaoStrategy = require("./passport/kakaoStrategy.js");
+const NaverStrategy = require("./passport/naverStrategy.js");
 const loggedincheck = require("./router/middlewares.js");
 
 const authRouter = require("./router/auth.js");
@@ -39,8 +40,10 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
 LocalStrategy();
 KakaoStrategy();
+NaverStrategy();
 passportConfig();
 
 app.use("/auth", authRouter); // 인증 라우터

@@ -6,7 +6,6 @@ const userModule = require("../models/userClass.js");
 
 //verify callback 인식을 못해서 따로 빼서 선언
 const verifyCallback = async (accessToken, refreshToken, profile, done) => {
-  console.log("Kakao Profile : ", profile);
   try {
     userModule.find(profile.displayName, "kakao", (error, result) => {
       if (result) {
