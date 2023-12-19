@@ -1,6 +1,6 @@
 const passport = require("passport");
 const local = require("./localStrategy");
-// const kakao = require("./kakaoStrategy.js");
+const kakao = require("./kakaoStrategy.js");
 const userModule = require("../models/userClass.js");
 
 module.exports = () => {
@@ -15,5 +15,5 @@ module.exports = () => {
   });
 
   local();
-  // kakao();
+  kakao(); // this requires a verify callback
 };

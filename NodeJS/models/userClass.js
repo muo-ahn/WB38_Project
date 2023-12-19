@@ -37,10 +37,9 @@ class User {
         callback("Error : ", error);
       } else {
         if (user) {
-          callback("ID exist : ", user);
+          callback("ID exist", user);
         } else {
           if (provider == "local" && pwd) {
-            // local Strategy
             hasher({ password: pwd }, (err, pass, salt, hash) => {
               this.db.query(
                 "INSERT INTO userTable (username, password, salt, email, provider) VALUES(?,?,?,?,?)",
@@ -55,7 +54,6 @@ class User {
               );
             });
           } else {
-            // Third party Strategy
             this.db.query(
               "INSERT INTO userTable (username, email, provider) VALUES (?,?,?)",
               [username, email, provider],
@@ -63,7 +61,7 @@ class User {
                 if (error) {
                   callback("Error: ", error);
                 } else {
-                  callback(null, "User created successfully");
+                  callback(null, "회원가입 성공");
                 }
               }
             );
