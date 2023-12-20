@@ -1,32 +1,9 @@
 var express = require("express");
 var router = express.Router();
-var template = require("../models/template.js");
-// var result = require("./Main.js");
 
-// const modulePath = "./NodeJS/AI_Module/helloworld.py";
-
-// router.get("", function (req, res) {
-//   var title = "ai 모듈 테스트";
-//   var html = template.HTML(
-//     title,
-//     `
-//     <form action="/ai/ai_process" method="post">
-//     <h2>AI 모듈 테스트<h2>
-//     <input class="btn" type="submit" value="ai test">
-//     </form>
-//     `,
-//     ""
-//   );
-//   res.send(html);
-// });
-
-// router.post("/ai_process", function (req, res) {
-//   const { spawn } = require("child_process");
-//   const result = spawn("python", [modulePath, "name test", "age test"]);
-
-//   result.stdout.on("data", function (data) {
-//     res.send(data.toString());
-//   });
-// });
+// 모듈 서빙 환경을 Fest API로 구축할 예정.
+// 그러면, ai 라우트에서는 해당 Fest API로
+// input : image buffer를 넘겨주고
+// output : text(질병 번호)를 넘겨받으면 될듯
 
 module.exports = router;
