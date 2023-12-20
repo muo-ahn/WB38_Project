@@ -36,6 +36,18 @@ Project Members : 권순호, 이현수, 김경익, 문성현, 황수영
 
 18th Dec 저녁, 안동혁 : kakao passport 준비
 
+19th Dec 오전, 안동혁 : Kakao passport 적용
+
+19th Dec 오후, 안동혁 : Naver passport 적용
+
+19th Dec 저녁, 안동혁 : Chatbot Framework 적용 시도, DialogFlow 사용 결정
+
+20th Dec 오전, 안동혁 : X
+
+20th Dec 오후, 안동혁 : Tensorflow.js 적용 시도, 실패...
+
+20th Dec 저녁, 안동혁 : ai 모델만 서빙하는 fast api 환경 구축 예정
+
 ==================================================
 참고 서적 및 사이트
 
