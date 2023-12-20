@@ -82,13 +82,13 @@ Goal
 
     To make it.
 
-        - Get some basic information from clients for our AI module.
+        - Get some basic information from clients for our AI module. : 완료
 
-        - Get Image data(disease of client's dog or cat) from client.
+        - Get Image data(disease of client's dog or cat) from client. : 완료
 
         - Get disease data from prediction of the AI Module.
 
-        - Get Data from disease DB table of the certain disease.
+        - Get Data from disease DB table of the certain disease. : 완료
 
         - Make a chat with those data.
 
