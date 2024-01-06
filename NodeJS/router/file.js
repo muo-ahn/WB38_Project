@@ -45,6 +45,7 @@ router.get("", loggedincheck.isLoggedIn, function (req, res) {
         <div>
           <p class="text">${results[index].petname}</p>
           <p class="text">${results[index].usertext}</p>
+          <p class="text">${results[index].diseaseid}</p>
           <img src="data:image/png;base64,${image}" 
           alt="Image ${index + 1}" 
           width="${width}"/>
@@ -78,6 +79,13 @@ router.get("/upload", loggedincheck.isLoggedIn, function (req, res) {
       <select name="petbreed">
         <option value="dog">반려견</option>
         <option value="cat">반려묘</option>
+      </select>
+      <p>
+      <select name="api">
+        <option value="skin">피부</option>
+        <option value="bone">근골격</option>
+        <option value="eye">안구</option>
+        <option value="stomach">복부</option>
       </select>
     </p>
     <p><input type="text" value="상담 내용 입력" name="usertext"/></p>
@@ -116,6 +124,7 @@ router.post("/upload", upload.array("uploadfile", 2), function (req, res) {
       req.files,
       req.body.petname,
       req.body.petbreed,
+      req.body.api,
       req.body.usertext,
       function (error, historyid) {
         if (error) {
