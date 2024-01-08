@@ -21,7 +21,6 @@ const loggedincheck = require("./router/middlewares.js");
 
 const authRouter = require("./router/auth.js");
 const fileRouter = require("./router/file.js");
-const aiRouter = require("./router/ai.js");
 
 const authCheck = require("./models/authCheck.js");
 const template = require("./models/template.js");
@@ -48,7 +47,6 @@ passportConfig();
 
 app.use("/auth", authRouter); // 인증 라우터
 app.use("/file", fileRouter); // 파일 라우터
-app.use("/ai", aiRouter); // ai 라우터
 
 app.get("/", (req, res) => {
   if (!authCheck.isOwner(req, res)) {

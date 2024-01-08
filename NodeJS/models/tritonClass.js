@@ -1,6 +1,7 @@
 const axios = require("axios");
 const { parse } = require("dotenv");
 const sharp = require("sharp");
+const DiseaseTable = require("./DiseaseTable.js");
 
 class Triton {
   //고양이가 진찰 의뢰하면 cat binary 2 4 6 + bone까지 돌아야하고
@@ -67,14 +68,14 @@ class Triton {
     const postprosessResult = [];
     await responses.forEach((response) => {
       const diseaseid = getDiseaseID(response.model_name);
-      if (diseaseid == "error") return callback(error);
+      if (diseaseid == "error") return callback("error");
 
       const dataResult = response.data;
       if (dataResult.length == 2) {
-        //output dims가 2인 모델
-        //dataResult[0] : 정상 확률, dataResult[1] : 비정상 확률
+        // dims == 2 인 경우, [0] : 질환 확률, [1] : 정상 확률
         dataResult.forEach((result, index) => {
           const totalResult = [];
+          totalResult.modelType = "two";
           totalResult.modelName = `${diseaseid}`;
           totalResult.modelIndex = `${index}`;
           totalResult.possResult = `${result * 100}`;
@@ -84,6 +85,7 @@ class Triton {
       } else if (dataResult.length == 7) {
         dataResult.forEach((result, index) => {
           const totalResult = [];
+          totalResult.modelType = "multi";
           totalResult.modelName = `${diseaseid}`;
           totalResult.modelIndex = `${index}`;
           totalResult.possResult = `${result * 100}`;
@@ -102,47 +104,50 @@ class Triton {
 function parseResult(postData) {
   // 원하는 결과 값 :
   //  질병이 있는 경우 : [ [질환 코드], [질환 코드] ] , index가 0인 경우, 병
-  //  질병이 없는 경우 : [ A7 ] 로 통일.
-  let parseResult = [];
+  //  질병이 없는 경우 : [ nor ] 로 통일.
 
+  // dims == 2 인 경우, [0] : 질환 확률, [1] : 정상 확률
+  const detectedDisease = new Set();
   postData.forEach((data) => {
-    if (data.modelName == "dog136" || data.modelName == "dog456") {
-      //개 모델
-      if (data.possResult >= 60) {
-        var temp = parseInt(data.modelIndex) + 1;
-        parseResult.push(`a${temp}`);
-        // rasa 질병 코드에 맞추어서 다시 맞추어야함.
-      }
-    } else {
-      //고양이 모델
-      if (data.possResult >= 60 || data.modelIndex == 0) {
-        parseResult.push(data.modelName);
+    const modelPart = data.modelName.split("\x07");
+
+    if (data.possResult >= 60) {
+      const indexOffset =
+        data.modelType === "multi" ? data.modelIndex - 1 : modelPart[2] - 1;
+
+      switch (modelPart[0]) {
+        case "skin":
+          detectedDisease.add(DiseaseTable.getDiseaseByIndex(0, indexOffset));
+          break;
+        case "bones":
+          detectedDisease.add(data.modelIndex === 0 ? "비정상" : "정상");
+          break;
+        case "abdominal":
+          detectedDisease.add(DiseaseTable.getDiseaseByIndex(2, indexOffset));
+          break;
+        case "thoracic":
+          detectedDisease.add(DiseaseTable.getDiseaseByIndex(3, indexOffset));
+          break;
+        case "eye":
+          detectedDisease.add(DiseaseTable.getDiseaseByIndex(4, indexOffset));
+          break;
+        default:
+          detectedDisease.add("nor");
+          break;
       }
     }
   });
 
-  let returnVaule = parseResult;
-
-  parseResult.forEach((result, index) => {
-    if (parseResult[index + 1] == result) {
-      //호출한 모델들의 추론 결과가 동일한 경우.
-      returnVaule = [];
-      returnVaule.push(result);
-    }
-  });
-
-  return returnVaule;
+  return Array.from(detectedDisease);
 }
 
 //반환된 모델 이름으로 질병 코드 반환하는 내부 함수
 function getDiseaseID(modelName) {
   const diseaseMap = {
-    bones: "bones",
-    cat_binary_A2: "A2",
-    cat_binary_A4: "A4",
-    cat_binary_A6: "A6",
-    dog_multi_A1_A3_A6: "dog136",
-    dog_multi_A4_A5_A6: "dog456",
+    bones: "bones\x07",
+    skin_cat: "skin\x07cat",
+    skin_dog: "skin\x07dog",
+    abdominal_ab01_3_1_train: "abdominal\x07multi\x071",
   };
 
   return diseaseMap[modelName] || "error";
@@ -152,16 +157,14 @@ function getDiseaseID(modelName) {
 function ModelSelect(petbreed, api) {
   const petModels = {
     dog: {
-      skin: ["dog_multi_A1_A3_A6", "dog_multi_A4_A5_A6"],
-      bone: "dog_bone",
-      eye: "dog_eye",
-      stomach: "dog_stomach",
+      skin: ["skin_dog"],
+      eye: ["eye_dog"],
+      abdominal: ["abdominal_ab01_3_1_train"],
     },
     cat: {
-      skin: ["cat_binary_A2", "cat_binary_A4", "cat_binary_A6"],
-      bone: "cat_bone",
-      eye: "cat_eye",
-      stomach: "cat_stomach",
+      skin: ["skin_cat"],
+      eye: ["eye_cat"],
+      abdominal: ["abdominal_ab01_3_1_train"],
     },
   };
 
@@ -187,23 +190,33 @@ async function preprocessImageData(imageData, modelsArray) {
 }
 
 async function getModelInputName(modelName) {
-  return modelName === "bones" ? "input_layer" : "inception_resnet_v2_input";
+  if (modelName == "bones" || modelName == "abdominal_ab01_3_1_train")
+    return "input_layer";
+  else return "inception_resnet_v2_input";
 }
 
 async function getModelInputShape(modelName) {
-  return modelName === "bones" ? [1, 256, 256, 3] : [1, 224, 224, 3];
+  if (modelName == "bones" || modelName == "abdominal_ab01_3_1_train")
+    return [1, 256, 256, 3];
+  else if (modelName == "skin_dog") return [1, 112, 112, 3];
+  else return [1, 224, 224, 3];
 }
 
 async function getNormailizedArray(floatArray, modelName) {
-  var resizedArray;
+  const mean = 0.35585182905197144;
+  const std = 0.24371127784252167;
 
-  if (modelName == "bone") {
+  var resizedArray;
+  if (modelName == "bones") {
     resizedArray = await resizeImage(floatArray, 256, 256);
-    return resizedArray.map((value) => value / 255.0);
+  } else if (modelName == "skin_dog") {
+    resizedArray = await resizeImage(floatArray, 112, 112);
   } else {
     resizedArray = await resizeImage(floatArray, 224, 224);
-    return resizedArray.map((value) => value / 223.0);
   }
+
+  const normalizedArray = resizedArray.map((value) => (value - mean) / std);
+  return normalizedArray;
 }
 
 // 이미지 resize

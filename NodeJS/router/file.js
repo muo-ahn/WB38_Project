@@ -83,9 +83,10 @@ router.get("/upload", loggedincheck.isLoggedIn, function (req, res) {
       <p>
       <select name="api">
         <option value="skin">피부</option>
-        <option value="bone">근골격</option>
+        <option value="bones">근골격</option>
+        <option value="abdominal">복부</option>
+        <option value="thoarcic">흉부</option>
         <option value="eye">안구</option>
-        <option value="stomach">복부</option>
       </select>
     </p>
     <p><input type="text" value="상담 내용 입력" name="usertext"/></p>
@@ -126,7 +127,7 @@ router.post("/upload", upload.array("uploadfile", 2), function (req, res) {
       req.body.petbreed,
       req.body.api,
       req.body.usertext,
-      function (error, historyid) {
+      function (error, rasaResult) {
         if (error) {
           console.error("Error:", error);
           postHTML = template.HTML(
@@ -139,21 +140,23 @@ router.post("/upload", upload.array("uploadfile", 2), function (req, res) {
                 `,
             authCheck.statusUI(req, res)
           );
+          res.send(postHTML);
         } else {
-          console.log("File uploaded successfully");
-          postHTML = template.HTML(
-            "이미지 업로드 성공",
-            `
-                <script type="text/javascript">
-                alert("이미지 업로드 성공.");
-                document.location.href="/file";
-                </script>
-                `,
-            authCheck.statusUI(req, res)
-          );
+          rasaResult.then((resolvedResult) => {
+            const rasaResultString = JSON.stringify(resolvedResult);
+            postHTML = template.HTML(
+              "이미지 업로드 성공",
+              `
+                  <script type="text/javascript">
+                  alert(${rasaResultString});
+                  document.location.href="/file";
+                  </script>
+                  `,
+              authCheck.statusUI(req, res)
+            );
+            res.send(postHTML);
+          });
         }
-
-        res.send(postHTML);
       }
     );
   } catch (e) {

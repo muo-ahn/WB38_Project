@@ -78,14 +78,21 @@ class File {
 
                     queryResult.push(queryTemp);
                   }
+                  if (!queryResult) return callback("db insert error");
 
                   // rasa 호출
-                  await rasaModule.rasaRequest("ab01");
+                  await rasaModule.rasaRequest(
+                    parseResult,
+                    (error, rasaResult) => {
+                      if (error) return callback(error);
+
+                      const obj = Objectify(rasaResult);
+                      return callback(null, obj);
+                    }
+                  );
                 }
               );
-
-              return callback(null, queryResult);
-            }.bind(this) // Bind the callback function to the instance
+            }.bind(this)
           );
         } catch (error) {
           return callback(error);
@@ -122,6 +129,17 @@ async function insertuserHistory(
   }
 
   return queryResult;
+}
+
+async function Objectify(rasaResult) {
+  console.log(rasaResult);
+
+  return (obj = {
+    aftercare: rasaResult.aftercare,
+    cure: rasaResult.cure,
+    diseaseName: rasaResult.diseaseName,
+    reason: rasaResult.reason,
+  });
 }
 
 module.exports = new File();
