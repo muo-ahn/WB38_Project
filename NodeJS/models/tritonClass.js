@@ -16,7 +16,6 @@ class Triton {
         imageData,
         modelsArray
       );
-
       if (!modelsArray) {
         return callback("Invalid petbreed or api");
       }
@@ -185,7 +184,7 @@ async function preprocessImageData(imageData, modelsArray) {
         name: await getModelInputName(modelsArray[0]),
         shape: await getModelInputShape(modelsArray[0]),
         datatype: "FP32",
-        data: await getNormailizedArray(floatArray, modelsArray[0]),
+        data: await getNormalizedArray(floatArray, modelsArray[0]),
       },
     ],
   };
@@ -204,20 +203,34 @@ async function getModelInputShape(modelName) {
   else return [1, 224, 224, 3];
 }
 
-async function getNormailizedArray(floatArray, modelName) {
-  const mean = 0.35585182905197144;
-  const std = 0.24371127784252167;
+async function getNormalizedArray(floatArray, modelName) {
+  let outputWidth, outputHeight, mean, std;
 
-  var resizedArray;
   if (modelName == "bones") {
-    resizedArray = await resizeImage(floatArray, 256, 256);
+    outputWidth = 256;
+    outputHeight = 256;
+    mean = [0.485, 0.456, 0.406];
+    std = [0.229, 0.224, 0.225];
   } else if (modelName == "skin_dog") {
-    resizedArray = await resizeImage(floatArray, 112, 112);
+    outputWidth = 112;
+    outputHeight = 112;
+    mean = [0.485, 0.456, 0.406];
+    std = [0.229, 0.224, 0.225];
   } else {
-    resizedArray = await resizeImage(floatArray, 224, 224);
+    outputWidth = 224;
+    outputHeight = 224;
+    mean = [0.485, 0.456, 0.406];
+    std = [0.229, 0.224, 0.225];
   }
 
-  const normalizedArray = resizedArray.map((value) => (value - mean) / std);
+  const resizedArray = await resizeImage(floatArray, outputWidth, outputHeight);
+  const flatResizedArray = resizedArray.flat();
+
+  const normalizedArray = flatResizedArray.map((value, index) => {
+    const normalizedValue = (value - mean[index % 3]) / std[index % 3];
+    return normalizedValue;
+  });
+
   return normalizedArray;
 }
 

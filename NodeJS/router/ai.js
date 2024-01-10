@@ -134,7 +134,7 @@ router.post("/upload", upload.array("uploadfile", 2), function (req, res) {
             `
                 <script type="text/javascript">
                 alert("이미지 업로드 실패.");
-                document.location.href="/file";
+                document.location.href="/ai";
                 </script>
                 `,
             authCheck.statusUI(req, res)
