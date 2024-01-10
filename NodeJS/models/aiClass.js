@@ -3,10 +3,10 @@ const mysql = require("mysql");
 const fs = require("fs").promises;
 const util = require("util");
 
-const tritonModule = require("../models/tritonClass.js");
-const rasaModule = require("../models/rasaClass.js");
+const tritonModule = require("./tritonClass.js");
+const rasaModule = require("./rasaClass.js");
 
-class File {
+class AI {
   constructor() {
     this.db = mysql.createConnection({
       host: "localhost",
@@ -142,4 +142,4 @@ async function Objectify(rasaResult) {
   });
 }
 
-module.exports = new File();
+module.exports = new AI();

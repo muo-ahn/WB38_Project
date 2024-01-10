@@ -3,7 +3,7 @@ var express = require("express");
 var router = express.Router();
 var multer = require("multer");
 
-const fileModule = require("../models/fileClass.js");
+const aiModule = require("../models/aiClass.js");
 const loggedincheck = require("./middlewares.js");
 
 const authCheck = require("../models/authCheck.js");
@@ -34,14 +34,12 @@ router.get("", loggedincheck.isLoggedIn, function (req, res) {
   const width = 200;
 
   //template에 find로 찾아온 정보 같이 껴주기.
-  fileModule.getUserHistory(
-    req.user.username,
-    function (error, images, results) {
-      if (error) throw error;
-      var imageHTML = "";
+  aiModule.getUserHistory(req.user.username, function (error, images, results) {
+    if (error) throw error;
+    var imageHTML = "";
 
-      images.forEach((image, index) => {
-        imageHTML += `
+    images.forEach((image, index) => {
+      imageHTML += `
         <div>
           <p class="text">${results[index].petname}</p>
           <p class="text">${results[index].usertext}</p>
@@ -51,28 +49,27 @@ router.get("", loggedincheck.isLoggedIn, function (req, res) {
           width="${width}"/>
         </div>
       `;
-      });
+    });
 
-      var html = template.HTML(
-        "업로드 목록",
-        `
-        <form action="/file/upload" method="get">
+    var html = template.HTML(
+      "업로드 목록",
+      `
+        <form action="/ai/upload" method="get">
           <input class="btn" type="submit" value="업로드 요청"/>
         </form>
         ${imageHTML}
         `,
-        authCheck.statusUI(req, res)
-      );
-      res.send(html);
-    }
-  );
+      authCheck.statusUI(req, res)
+    );
+    res.send(html);
+  });
 });
 
 router.get("/upload", loggedincheck.isLoggedIn, function (req, res) {
   var html = template.HTML(
     "이미지 업로드",
     `
-    <form action="/file/upload" method="post" enctype='multipart/form-data'>
+    <form action="/ai/upload" method="post" enctype='multipart/form-data'>
     <p><input type="file" value="이미지 선택" name="uploadfile" multiple/></p>
     <p><input type="text" value="반려동물 이름 입력" name="petname"/></p>
     <p>
@@ -111,7 +108,7 @@ router.post("/upload", upload.array("uploadfile", 2), function (req, res) {
         `
         <script type="text/javascript">
         alert("입력 파일 확인.");
-        document.location.href="/file";
+        document.location.href="/ai";
         </script>
         `,
         authCheck.statusUI(req, res)
@@ -120,7 +117,7 @@ router.post("/upload", upload.array("uploadfile", 2), function (req, res) {
       return;
     }
 
-    fileModule.createUserHistory(
+    aiModule.createUserHistory(
       req.user.username,
       req.files,
       req.body.petname,
@@ -149,7 +146,7 @@ router.post("/upload", upload.array("uploadfile", 2), function (req, res) {
               `
                   <script type="text/javascript">
                   alert(${rasaResultString});
-                  document.location.href="/file";
+                  document.location.href="/ai";
                   </script>
                   `,
               authCheck.statusUI(req, res)
