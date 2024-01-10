@@ -116,19 +116,15 @@ async function insertuserHistory(
   diseaseid,
   queryAsync
 ) {
-  let queryResult;
-
-  if (diseaseid == null) {
-    queryResult = await queryAsync(
-      "INSERT INTO userHistory (username, image, petname, petbreed, usertext) VALUES(?,?,?,?,?)",
-      [username, imageData, petname, petbreed, usertext]
-    );
-  } else {
-    queryResult = await queryAsync(
-      "INSERT INTO userHistory (username, image, petname, petbreed, usertext, diseaseid) VALUES(?,?,?,?,?,?)",
-      [username, imageData, petname, petbreed, usertext, diseaseid]
-    );
-  }
+  const queryResult = diseaseid
+    ? await queryAsync(
+        "INSERT INTO userHistory (username, image, petname, petbreed, usertext, diseaseid) VALUES(?,?,?,?,?,?)",
+        [username, imageData, petname, petbreed, usertext, diseaseid]
+      )
+    : await queryAsync(
+        "INSERT INTO userHistory (username, image, petname, petbreed, usertext) VALUES(?,?,?,?,?)",
+        [username, imageData, petname, petbreed, usertext]
+      );
 
   return queryResult;
 }

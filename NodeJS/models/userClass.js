@@ -23,7 +23,7 @@ class User {
       "SELECT * FROM userTable WHERE username = ? AND provider = ?",
       [username, provider],
       (error, results, fields) => {
-        if (error) throw error;
+        if (error) return callback(error);
         if (results.length > 0) {
           callback(null, results[0]);
         } else {
