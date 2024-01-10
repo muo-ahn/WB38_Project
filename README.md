@@ -8,45 +8,17 @@ Project Members : 권순호, 이현수, 김경익, 문성현, 황수영
 
 ==================================================
 
-12th Dec 오전, 안동혁 : server에 file upload 동작 확인
+12th Dec, 안동혁 : server file upload logic works.
 
-12th Dec 오후, 안동혁 : node based server 내, python 모듈 동작 확인
+13th Dec, 안동혁 : passport, localStrategy 완료
 
-12th Dec 저녁, 안동혁 : 미들웨어 작업 시작 - 미들웨어를 더욱 촘촘히
+14th Dec, 안동혁 : Node.js process.env 환경 변수 설정, password hashing 오류 해결
 
-13th Dec 오전, 안동혁 : passport로 전환 시작
+15th Dec, 안동혁 : file module finish
 
-13th Dec 오후, 안동혁 : passport, localStrategy 완료
+19th Dec, 안동혁 : Kakao, Naver passport
 
-13th Dec 저녁, 안동혁 : passport, KakaoStrategy 학습
-
-14th Dec 오전, 안동혁 : Node.js process.env 환경 변수 설정, password hashing 오류 해결
-
-14th Dec 오후, 안동혁 : 예외처리 작업
-
-14th Dec 저녁, 안동혁 : 예외처리 작업
-
-15th Dec 오전, 안동혁 : file 모듈 클래스화 및 db 관계 설정
-
-15th Dec 오후, 안동혁 : file 모듈 사용, db에 저장
-
-18th Dec 오전, 안동혁 : file 모듈 버그 해결
-
-18th Dec 오후, 안동혁 : 개인 이미지 게시판 구현
-
-18th Dec 저녁, 안동혁 : kakao passport 준비
-
-19th Dec 오전, 안동혁 : Kakao passport 적용
-
-19th Dec 오후, 안동혁 : Naver passport 적용
-
-19th Dec 저녁, 안동혁 : Chatbot Framework 적용 시도, DialogFlow 사용 결정
-
-20th Dec 오전, 안동혁 : X
-
-20th Dec 오후, 안동혁 : Tensorflow.js 적용 시도, 실패...
-
-20th Dec 저녁, 안동혁 : ai 모델만 서빙하는 fast api 환경 구축 예정
+20th Dec 저녁, 안동혁 : try to run Triton Inference Server
 
 06th Jan 하루, 안동혁 : Triton, Rasa server 연결 성공
 
