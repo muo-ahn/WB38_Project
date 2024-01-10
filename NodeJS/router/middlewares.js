@@ -1,3 +1,5 @@
+//middlewares.js
+
 module.exports.isLoggedIn = (req, res, next) => {
   // isAuthenticated()로 검사해 로그인이 되어있으면
   if (req.isAuthenticated()) {

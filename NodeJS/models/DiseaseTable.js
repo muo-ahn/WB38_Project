@@ -1,10 +1,4 @@
-// part index :
-//  0 피부
-//  1 근골격
-//  2 복부
-//  3 흉부
-//  4 안구
-//  5 무증상
+//DiseaseTable.js
 
 class DiseaseTable {
   constructor() {

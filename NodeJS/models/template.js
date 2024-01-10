@@ -1,3 +1,5 @@
+//template.js
+
 module.exports = {
   HTML: function (title, body, authStatusUI) {
     return `

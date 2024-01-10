@@ -1,3 +1,5 @@
+//tritonClass.js
+
 const axios = require("axios");
 const { parse } = require("dotenv");
 const sharp = require("sharp");

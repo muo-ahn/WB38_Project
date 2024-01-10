@@ -1,3 +1,5 @@
+//kakaoStrategy.js
+
 require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
 
 const passport = require("passport");

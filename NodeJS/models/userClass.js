@@ -1,3 +1,5 @@
+//userClass.js
+
 require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
 const mysql = require("mysql");
 

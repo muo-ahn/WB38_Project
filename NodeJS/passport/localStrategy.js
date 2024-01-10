@@ -1,3 +1,5 @@
+//localStrategy.js
+
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const userModule = require("../models/userClass.js");

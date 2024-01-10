@@ -1,3 +1,5 @@
+//authCheck.js
+
 module.exports = {
   isOwner: function (req, res) {
     return req.isAuthenticated();
