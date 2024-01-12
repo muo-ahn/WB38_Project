@@ -1,9 +1,10 @@
 //tritonClass.js
 
 const axios = require("axios");
-const { parse } = require("dotenv");
-const sharp = require("sharp");
 const DiseaseTable = require("./DiseaseTable.js");
+const sharp = require("sharp");
+
+const fastAPI = require("./fastAPI.js");
 
 class Triton {
   //고양이가 진찰 의뢰하면 cat binary 2 4 6 + bone까지 돌아야하고
@@ -26,7 +27,6 @@ class Triton {
 
           try {
             const startTime = new Date();
-
             const response = await axios.post(
               tritonServerUrl,
               JSON.stringify(processedImageData),
@@ -114,14 +114,14 @@ function parseResult(postData) {
 
     if (data.possResult >= 60) {
       const indexOffset =
-        data.modelType === "multi" ? data.modelIndex - 1 : modelPart[2] - 1;
+        data.modelType === "multi" ? data.modelIndex - 1 : modelPart[1] - 1;
 
       switch (modelPart[0]) {
         case "skin":
           detectedDisease.add(DiseaseTable.getDiseaseByIndex(0, indexOffset));
           break;
         case "bones":
-          detectedDisease.add(data.modelIndex === 0 ? "비정상" : "정상");
+          detectedDisease.add(data.modelIndex === 0 ? "정상" : "비정상");
           break;
         case "abdominal":
           detectedDisease.add(DiseaseTable.getDiseaseByIndex(2, indexOffset));
@@ -148,7 +148,8 @@ function getDiseaseID(modelName) {
     bones: "bones\x07",
     skin_cat: "skin\x07cat",
     skin_dog: "skin\x07dog",
-    abdominal_ab01_3_1_train: "abdominal\x07multi\x071",
+    abdominal_ab01_3_1_train: "abdominal\x071",
+    eye_hack: "eye\x07",
   };
 
   return diseaseMap[modelName] || "error";
@@ -159,12 +160,12 @@ function ModelSelect(petbreed, api) {
   const petModels = {
     dog: {
       skin: ["skin_dog"],
-      eye: ["eye_dog"],
+      eye: ["eye_hack"],
       abdominal: ["abdominal_ab01_3_1_train"],
     },
     cat: {
       skin: ["skin_cat"],
-      eye: ["eye_cat"],
+      eye: ["eye_hack"],
       abdominal: ["abdominal_ab01_3_1_train"],
     },
   };
@@ -176,7 +177,7 @@ function ModelSelect(petbreed, api) {
 
 //triton으로 넘기기 위해서 JSON 변환 전처리
 async function preprocessImageData(imageData, modelsArray) {
-  const floatArray = Array.from(new Uint8Array(imageData));
+  const data = await getNormalizedArray(imageData, modelsArray[0]);
 
   return {
     inputs: [
@@ -184,7 +185,7 @@ async function preprocessImageData(imageData, modelsArray) {
         name: await getModelInputName(modelsArray[0]),
         shape: await getModelInputShape(modelsArray[0]),
         datatype: "FP32",
-        data: await getNormalizedArray(floatArray, modelsArray[0]),
+        data: data.processedData,
       },
     ],
   };
@@ -193,6 +194,7 @@ async function preprocessImageData(imageData, modelsArray) {
 async function getModelInputName(modelName) {
   if (modelName == "bones" || modelName == "abdominal_ab01_3_1_train")
     return "input_layer";
+  else if (modelName == "eye_hack") return "resnet50_input";
   else return "inception_resnet_v2_input";
 }
 
@@ -204,48 +206,24 @@ async function getModelInputShape(modelName) {
 }
 
 async function getNormalizedArray(floatArray, modelName) {
-  let outputWidth, outputHeight, mean, std;
+  let outputWidth, outputHeight;
+  let resize;
 
   if (modelName == "bones") {
     outputWidth = 256;
     outputHeight = 256;
-    mean = [0.485, 0.456, 0.406];
-    std = [0.229, 0.224, 0.225];
+    resize = [256, 256];
   } else if (modelName == "skin_dog") {
     outputWidth = 112;
     outputHeight = 112;
-    mean = [0.485, 0.456, 0.406];
-    std = [0.229, 0.224, 0.225];
+    resize = [112, 112];
   } else {
     outputWidth = 224;
     outputHeight = 224;
-    mean = [0.485, 0.456, 0.406];
-    std = [0.229, 0.224, 0.225];
+    resize = [224, 224];
   }
 
-  const resizedArray = await resizeImage(floatArray, outputWidth, outputHeight);
-  const flatResizedArray = resizedArray.flat();
-
-  const normalizedArray = flatResizedArray.map((value, index) => {
-    const normalizedValue = (value - mean[index % 3]) / std[index % 3];
-    return normalizedValue;
-  });
-
-  return normalizedArray;
-}
-
-// 이미지 resize
-async function resizeImage(inputArray, outputWidth, outputHeight) {
-  const buffer = Buffer.from(inputArray);
-  try {
-    const resizedBuffer = await sharp(buffer)
-      .resize(outputWidth, outputHeight)
-      .toBuffer();
-
-    return Array.from(new Uint8Array(resizedBuffer));
-  } catch (error) {
-    throw error;
-  }
+  return await fastAPI.FastAPIRequest(floatArray, resize);
 }
 
 module.exports = new Triton();
