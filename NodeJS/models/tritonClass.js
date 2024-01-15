@@ -97,6 +97,8 @@ class Triton {
     });
 
     let parserResult = parseResult(postprosessResult);
+
+    //이미 질환을 가지고 있을 때, 입력된 nor만 빼주고 callback
     callback(null, parserResult);
   }
 }
@@ -107,27 +109,31 @@ function parseResult(postData) {
   //  질병이 있는 경우 : [ [질환 코드], [질환 코드] ] , index가 0인 경우, 병
   //  질병이 없는 경우 : [ nor ] 로 통일.
 
-  // dims == 2 인 경우, [0] : 질환 확률, [1] : 정상 확률
+  // dims == 2 인 경우, [0] : 정상 확률, [1] : 질환 확률
   const detectedDisease = new Set();
   postData.forEach((data) => {
     const modelPart = data.modelName.split("\x07");
 
-    if (data.possResult >= 60) {
+    if (data.possResult >= 53) {
       const indexOffset =
-        data.modelType === "multi" ? data.modelIndex - 1 : modelPart[1] - 1;
+        data.modelType === "multi" ? data.modelIndex : modelPart[1] - 1;
 
       switch (modelPart[0]) {
         case "skin":
           detectedDisease.add(DiseaseTable.getDiseaseByIndex(0, indexOffset));
           break;
         case "bones":
-          detectedDisease.add(data.modelIndex === 0 ? "정상" : "비정상");
+          detectedDisease.add(data.modelIndex === "0" ? "정상" : "비정상");
           break;
         case "abdominal":
-          detectedDisease.add(DiseaseTable.getDiseaseByIndex(2, indexOffset));
+          if (data.modelIndex == 1) {
+            detectedDisease.add(DiseaseTable.getDiseaseByIndex(2, indexOffset));
+          }
           break;
         case "thoracic":
-          detectedDisease.add(DiseaseTable.getDiseaseByIndex(3, indexOffset));
+          if (data.modelIndex == 1) {
+            detectedDisease.add(DiseaseTable.getDiseaseByIndex(3, indexOffset));
+          }
           break;
         case "eye":
           detectedDisease.add(DiseaseTable.getDiseaseByIndex(4, indexOffset));
@@ -136,10 +142,17 @@ function parseResult(postData) {
           detectedDisease.add("nor");
           break;
       }
+    } else {
+      detectedDisease.add("nor");
     }
   });
 
-  return Array.from(detectedDisease);
+  if (detectedDisease.size == 1) {
+    return Array.from(detectedDisease);
+  } else {
+    detectedDisease.delete("nor");
+    return Array.from(detectedDisease);
+  }
 }
 
 //반환된 모델 이름으로 질병 코드 반환하는 내부 함수
@@ -148,8 +161,12 @@ function getDiseaseID(modelName) {
     bones: "bones\x07",
     skin_cat: "skin\x07cat",
     skin_dog: "skin\x07dog",
-    abdominal_ab01_3_1_train: "abdominal\x071",
-    eye_hack: "eye\x07",
+    Ab01: "abdominal\x071",
+    Ab04: "abdominal\x074",
+    Ab05: "abdominal\x075",
+    Ab09: "abdominal\x079",
+    Ch01: "thoracic\x071",
+    eye_hack: "eye\x078",
   };
 
   return diseaseMap[modelName] || "error";
@@ -161,12 +178,14 @@ function ModelSelect(petbreed, api) {
     dog: {
       skin: ["skin_dog"],
       eye: ["eye_hack"],
-      abdominal: ["abdominal_ab01_3_1_train"],
+      abdominal: ["Ab01", "Ab04", "Ab05", "Ab09"],
+      thoarcic: ["Ch01"],
     },
     cat: {
       skin: ["skin_cat"],
       eye: ["eye_hack"],
-      abdominal: ["abdominal_ab01_3_1_train"],
+      abdominal: ["Ab01", "Ab04", "Ab05", "Ab09"],
+      thoarcic: ["Ch01"],
     },
   };
 
@@ -192,14 +211,28 @@ async function preprocessImageData(imageData, modelsArray) {
 }
 
 async function getModelInputName(modelName) {
-  if (modelName == "bones" || modelName == "abdominal_ab01_3_1_train")
+  if (
+    modelName == "bones" ||
+    modelName == "Ab01" ||
+    modelName == "Ab04" ||
+    modelName == "Ab05" ||
+    modelName == "Ab09" ||
+    modelName == "Ch01"
+  )
     return "input_layer";
   else if (modelName == "eye_hack") return "resnet50_input";
   else return "inception_resnet_v2_input";
 }
 
 async function getModelInputShape(modelName) {
-  if (modelName == "bones" || modelName == "abdominal_ab01_3_1_train")
+  if (
+    modelName == "bones" ||
+    modelName == "Ab01" ||
+    modelName == "Ab04" ||
+    modelName == "Ab05" ||
+    modelName == "Ab09" ||
+    modelName == "Ch01"
+  )
     return [1, 256, 256, 3];
   else if (modelName == "skin_dog") return [1, 112, 112, 3];
   else return [1, 224, 224, 3];
@@ -209,7 +242,14 @@ async function getNormalizedArray(floatArray, modelName) {
   let outputWidth, outputHeight;
   let resize;
 
-  if (modelName == "bones") {
+  if (
+    modelName == "bones" ||
+    modelName == "Ab01" ||
+    modelName == "Ab04" ||
+    modelName == "Ab05" ||
+    modelName == "Ab09" ||
+    modelName == "Ch01"
+  ) {
     outputWidth = 256;
     outputHeight = 256;
     resize = [256, 256];

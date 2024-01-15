@@ -11,7 +11,6 @@ class DiseaseTable {
         ACNE: "sk04",
         ULCER: "sk05",
         NODULE: "sk06",
-        ASYMPTOMATIC: "sk07",
       },
 
       // 근골격

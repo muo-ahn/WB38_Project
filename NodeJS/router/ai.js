@@ -97,7 +97,7 @@ router.get("/upload", loggedincheck.isLoggedIn, function (req, res) {
   res.send(html);
 });
 
-router.post("/upload", upload.array("uploadfile", 2), function (req, res) {
+router.post("/upload", upload.array("uploadfile", 1), function (req, res) {
   try {
     var postHTML;
     const areAllImages = req.files.every((file) =>
