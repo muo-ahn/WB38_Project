@@ -18,9 +18,11 @@ Project Members : 권순호, 이현수, 김경익, 문성현, 황수영
 
 19th Dec, 안동혁 : Kakao, Naver passport
 
-20th Dec 저녁, 안동혁 : try to run Triton Inference Server
+20th Dec, 안동혁 : try to run Triton Inference Server
 
-06th Jan 하루, 안동혁 : Triton, Rasa server 연결 성공
+06th Jan, 안동혁 : Triton, Rasa server 연결 성공
+
+15th Jan, 안동혁 : input 전처리 및 정규화 서버 분할 - node.js tensorflow/tfjs-node 패키지 설치 오류
 
 ==================================================
 참고 서적 및 사이트
@@ -41,7 +43,7 @@ Goal
 
 1.  안구, 피부, 복부, 흉부, 근골격 데이터 학습
 
-    - 현재 안구와 피부 진행 중.
+    - 현재 안구와 피부 진행 중 : 안구, 일부 흉부 모델 제외 완료
 
 2.  Chatbot can work as a real vet {
 
@@ -51,10 +53,10 @@ Goal
 
         - Get Image data(disease of client's dog or cat) from client. : 완료
 
-        - Get disease data from prediction of the AI Module.
+        - Get disease data from prediction of the AI Module. : 완료
 
         - Get Data from disease DB table of the certain disease. : 완료
 
-        - Make a chat with those data.
+        - Make a chat with those data. : Rasa 챗봇 이용해 완료
 
 }
