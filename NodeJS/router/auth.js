@@ -3,10 +3,9 @@
 const express = require("express");
 const router = express.Router();
 const userModule = require("../models/userClass.js");
-const loggedincheck = require("./middlewares.js");
 const passport = require("passport");
 
-router.post("/login_process", loggedincheck.isNotLoggedIn, (req, res, next) => {
+router.post("/login_process", (req, res, next) => {
   console.log(`로그인 시도 : ${req.body.username} ${req.body.password}`);
 
   passport.authenticate(
@@ -28,19 +27,14 @@ router.post("/login_process", loggedincheck.isNotLoggedIn, (req, res, next) => {
         }
 
         req.session.save(() => {
-          return res.status(200).json({ user: user.username });
+          return res.status(200).json({ user: user });
         });
       });
     }
   )(req, res, next);
 });
 
-router.post(
-  "/kakao",
-  loggedincheck.isNotLoggedIn,
-  passport.authenticate("kakao")
-);
-
+router.post("/kakao", passport.authenticate("kakao"));
 router.post(
   "/kakao/callback",
   passport.authenticate("kakao", {
@@ -52,12 +46,7 @@ router.post(
   }
 );
 
-router.post(
-  "/naver",
-  loggedincheck.isNotLoggedIn,
-  passport.authenticate("naver")
-);
-
+router.post("/naver", passport.authenticate("naver"));
 router.post(
   "/naver/callback",
   passport.authenticate("naver", {
@@ -69,7 +58,7 @@ router.post(
 );
 
 router.post("/logout_process", function (req, res) {
-  console.log(`로그아웃 시도 : ${req.body.username}`);
+  console.log(`로그아웃 시도 : ${req.user}`);
 
   req.logout(function () {
     req.session.destroy(function (err) {

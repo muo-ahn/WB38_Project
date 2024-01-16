@@ -6,7 +6,6 @@ var router = express.Router();
 var multer = require("multer");
 
 const aiModule = require("../models/aiClass.js");
-const loggedincheck = require("./middlewares.js");
 
 var storage = multer.diskStorage({
   // destination: function (req, file, callback) {
@@ -28,7 +27,7 @@ var upload = multer({
   storage: storage,
 });
 
-router.post("", loggedincheck.isLoggedIn, function (req, res) {
+router.post("", function (req, res) {
   aiModule.getUserHistory(req.user.username, function (error, images, results) {
     if (error) throw res.status(401).json({ error: "History 검색 오류" });
     var userHistory = {
