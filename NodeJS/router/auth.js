@@ -2,117 +2,84 @@
 
 const express = require("express");
 const router = express.Router();
-const template = require("../models/template.js");
 const userModule = require("../models/userClass.js");
 const loggedincheck = require("./middlewares.js");
 const passport = require("passport");
 
-router.get("/login", loggedincheck.isNotLoggedIn, function (req, res) {
-  var title = "로그인";
-  var html = template.HTML(
-    title,
-    `
-    <h2>로그인<h2>
-    <form action="/auth/login_process" method="post">
-    <p><input class="login" type="text" name="username" placeholder="아이디"></p>
-    <p><input class="login" type="password" name="password" placeholder="비밀번호"></p>
-    <p><input class="btn" type="submit" value="로그인"></p>
-    <p><a id="kakao" href="/auth/kakao" class="btn">카카오톡 로그인</a>
-    <p><a id="naver" href="/auth/naver" class="btn">네이버 로그인</a>
-    </form>            
-    <p>계정이 없으신가요?  <a href="/auth/register">회원가입</a></p>
-    `,
-    ""
-  );
-  res.send(html);
-});
+router.post("/login_process", loggedincheck.isNotLoggedIn, (req, res, next) => {
+  console.log(`로그인 시도 : ${req.body.username} ${req.body.password}`);
 
-router.post("/login_process", (req, res, next) => {
   passport.authenticate(
     "local",
-    { failureRedirect: "/login", failureFlash: true },
+    { failureRedirect: "/", failureFlash: true },
     (authError, user, info) => {
       if (authError) {
         console.log(authError);
         return next(authError);
       }
       if (!user) {
-        return res.redirect(`/?loginError=${info.message}`);
+        return res.status(401).json({ error: info.message });
       }
 
-      return req.login(user, (loginError) => {
+      req.login(user, (loginError) => {
         if (loginError) {
           console.error(loginError);
           return next(loginError);
         }
 
-        return req.session.save(function () {
-          res.redirect("/");
+        req.session.save(() => {
+          return res.status(200).json({ user: user.username });
         });
       });
     }
   )(req, res, next);
 });
 
-router.get(
+router.post(
   "/kakao",
   loggedincheck.isNotLoggedIn,
   passport.authenticate("kakao")
 );
 
-router.get(
+router.post(
   "/kakao/callback",
   passport.authenticate("kakao", {
     failureRedirect: "/auth/login",
   }),
   // when kakao strategy is success
   (req, res) => {
-    res.redirect("/");
+    res.status(200);
   }
 );
 
-router.get(
+router.post(
   "/naver",
   loggedincheck.isNotLoggedIn,
   passport.authenticate("naver")
 );
 
-router.get(
+router.post(
   "/naver/callback",
   passport.authenticate("naver", {
     failureRedirect: "/auth/login",
   }),
   (req, res) => {
-    res.redirect("/");
+    res.status(200);
   }
 );
 
-router.get("/logout", loggedincheck.isLoggedIn, function (req, res) {
-  req.logout(function (err) {
+router.post("/logout_process", function (req, res) {
+  console.log(`로그아웃 시도 : ${req.body.username}`);
+
+  req.logout(function () {
     req.session.destroy(function (err) {
-      res.redirect("/");
+      if (err) {
+        console.log("Error : " + err);
+        return res.status(401).json({ error: "logout error" });
+      }
+      return res.status(200).json({ message: "로그아웃 성공" });
     });
   });
-});
-
-router.get("/register", loggedincheck.isNotLoggedIn, function (req, res) {
-  var title = "회원가입";
-  var html = template.HTML(
-    title,
-    `
-    <h2>회원가입</h2>
-    <form action="/auth/register_process" method="post">
-    <p><input class="login" type="text" name="username" placeholder="아이디"></p>
-    <p><input class="login" type="password" name="pwd" placeholder="비밀번호"></p>    
-    <p><input class="login" type="password" name="pwd2" placeholder="비밀번호 재확인"></p>
-    <p><input class="login" type="text" name="email" placeholder="이메일"></p>
-    <p><input class="btn" type="submit" value="제출"></p>
-    </form>            
-    <p><a href="/auth/login">로그인화면으로 돌아가기</a></p>
-    `,
-    ""
-  );
-  res.send(html);
 });
 
 router.post("/register_process", function (req, res) {
@@ -131,26 +98,18 @@ router.post("/register_process", function (req, res) {
         function (error, result, salt) {
           if (error) {
             console.error("Error:", error);
-            res.send(
-              '<script type="text/javascript">alert("에러 발생"); document.location.href="/auth/register";</script>'
-            );
+            res.status(401).json({ error: error });
           } else {
-            res.send(
-              '<script type="text/javascript">alert("회원가입 성공!"); document.location.href="/";</script>'
-            );
+            res.status(200);
           }
         }
       );
     } else if (password !== password2) {
       // 잘못된 패스워드 입력
-      res.send(
-        '<script type="text/javascript">alert("패스워드 입력을 확인하세요."); document.location.href="/auth/register";</script>'
-      );
+      res.status(401).json({ error: "잘못된 pw" });
     } else {
       // 이미 존재하는 id
-      res.send(
-        '<script type="text/javascript">alert("이미 존재하는 id"); document.location.href="/auth/register";</script>'
-      );
+      res.status(401).json({ error: "이미 존재하는 id" });
     }
   }
 });

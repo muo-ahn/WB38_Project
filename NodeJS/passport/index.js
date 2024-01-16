@@ -3,6 +3,7 @@
 const passport = require("passport");
 const local = require("./localStrategy");
 const kakao = require("./kakaoStrategy.js");
+const naver = require("./naverStrategy.js");
 const userModule = require("../models/userClass.js");
 
 module.exports = () => {
@@ -18,4 +19,5 @@ module.exports = () => {
 
   local();
   kakao(); // this requires a verify callback
+  naver();
 };

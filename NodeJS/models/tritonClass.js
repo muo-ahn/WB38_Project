@@ -12,6 +12,8 @@ class Triton {
   async TritonRequest(imageData, petbreed, api, callback) {
     //triton server로 request
     try {
+      const totalStartTime = new Date();
+
       const modelsArray = await ModelSelect(petbreed, api);
       const processedImageData = await preprocessImageData(
         imageData,
@@ -55,6 +57,9 @@ class Triton {
       );
 
       console.log("Triton Output : " + responses);
+      const totalEndTime = new Date();
+
+      console.log(`Total request ${totalEndTime - totalStartTime}ms`);
       return callback(null, responses);
     } catch (error) {
       console.error("Error : " + error);
