@@ -27,7 +27,7 @@ router.post("/login_process", (req, res, next) => {
         }
 
         req.session.save(() => {
-          return res.status(200).json({ user: user });
+          return res.status(200).json({ user: user.username });
         });
       });
     }
@@ -58,8 +58,6 @@ router.post(
 );
 
 router.post("/logout_process", function (req, res) {
-  console.log(`로그아웃 시도 : ${req.user}`);
-
   req.logout(function () {
     req.session.destroy(function (err) {
       if (err) {
