@@ -12,14 +12,7 @@ var storage = multer.diskStorage({
   //   callback(null, "./NodeJS/uploadFiles/"); //파일 저장 디렉토리
   // },
   filename: function (req, file, callback) {
-    callback(
-      null,
-      req.session.passport.user.username +
-        "_" +
-        Date.now() +
-        "_" +
-        file.originalname
-    );
+    callback(null, Date.now() + "_" + file.originalname);
   },
 });
 
@@ -28,7 +21,9 @@ var upload = multer({
 });
 
 router.post("", function (req, res) {
-  aiModule.getUserHistory(req.user.username, function (error, images, results) {
+  console.log("userHistory request");
+
+  aiModule.getUserHistory(req.body.user, function (error, images, results) {
     if (error) throw res.status(401).json({ error: "History 검색 오류" });
     var userHistory = {
       username: results[0].username,
@@ -37,6 +32,7 @@ router.post("", function (req, res) {
     images.forEach((image, index) => {
       var history = {
         petname: results[index].petname,
+        petbreed: results[index].petbreed,
         usertext: results[index].usertext,
         diseaseid: results[index].diseaseid,
         image: Buffer.from(image).toString("base64"),
@@ -78,19 +74,23 @@ router.post("", function (req, res) {
 //   res.send(html);
 // });
 
-router.post("/upload", upload.array("uploadfile", 1), function (req, res) {
+router.post("/upload", upload.single("file"), function (req, res) {
   try {
-    const areAllImages = req.files.every((file) =>
-      file.mimetype.startsWith("image/")
-    );
+    const imageRequest = [];
 
-    if (!areAllImages || !req.files) {
-      return res.status(401).json({ error: "파일을 확인해주세요." });
+    if (req.file.mimetype.startsWith("image/")) {
+      imageRequest.push(req.file);
+    } else if (req.file.mimetype.startsWith("video/")) {
+      //프레임 추출 요청
+    } else {
+      if (!req.files) {
+        return res.status(401).json({ error: "파일을 확인해주세요." });
+      }
     }
 
     aiModule.createUserHistory(
-      req.user.username,
-      req.files,
+      req.body.username,
+      req.file,
       req.body.petname,
       req.body.petbreed,
       req.body.api,

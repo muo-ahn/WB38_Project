@@ -92,18 +92,18 @@ router.post("/register_process", function (req, res) {
         function (error, result, salt) {
           if (error) {
             console.error("Error:", error);
-            res.status(401).json({ error: error });
+            return res.status(401).json({ error: error });
           } else {
-            res.status(200);
+            return res.status(200).json({ message: result });
           }
         }
       );
     } else if (password !== password2) {
       // 잘못된 패스워드 입력
-      res.status(401).json({ error: "잘못된 pw" });
+      return res.status(401).json({ error: "잘못된 pw" });
     } else {
       // 이미 존재하는 id
-      res.status(401).json({ error: "이미 존재하는 id" });
+      return res.status(401).json({ error: "이미 존재하는 id" });
     }
   }
 });
