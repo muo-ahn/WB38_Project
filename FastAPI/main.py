@@ -5,7 +5,7 @@ import tensorflow as tf
 
 app = FastAPI()
 
-@app.post("/")
+@app.post("/postprocess")
 async def preprocess(data: dict):
     try:
         bytes_data = bytes(data['bytes_image']['data'])

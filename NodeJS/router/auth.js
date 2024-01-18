@@ -27,7 +27,9 @@ router.post("/login_process", (req, res, next) => {
         }
 
         req.session.save(() => {
-          return res.status(200).json({ user: user.username });
+          return res
+            .status(200)
+            .json({ user: user.username, provider: user.provider });
         });
       });
     }
@@ -58,21 +60,26 @@ router.post(
 );
 
 router.post("/logout_process", function (req, res) {
-  req.logout(function () {
-    req.session.destroy(function (err) {
-      if (err) {
-        console.log("Error : " + err);
-        return res.status(401).json({ error: "logout error" });
-      }
-      return res.status(200).json({ message: "로그아웃 성공" });
+  userModule.find(req.body.user, req.body.provider, (error, results) => {
+    if (error) return res.status(401).json({ error: "잘못된 접근" });
+
+    req.user = results;
+    req.logout(function () {
+      req.session.destroy(function (err) {
+        if (err) {
+          console.log("Error : " + err);
+          return res.status(401).json({ error: "logout error" });
+        }
+        return res.status(200).json({ message: "로그아웃 성공" });
+      });
     });
   });
 });
 
 router.post("/register_process", function (req, res) {
   var username = req.body.username;
-  var password = req.body.pwd;
-  var password2 = req.body.pwd2;
+  var password = req.body.password;
+  var password2 = req.body.password2;
   var email = req.body.email;
 
   if (username && password && password2) {

@@ -268,7 +268,7 @@ async function getNormalizedArray(floatArray, modelName) {
     resize = [224, 224];
   }
 
-  return await fastAPI.FastAPIRequest(floatArray, resize);
+  return await fastAPI.FastAPIRequest(floatArray, resize, "postprocess");
 }
 
 module.exports = new Triton();

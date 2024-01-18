@@ -80,13 +80,12 @@ router.post("", function (req, res) {
 
 router.post("/upload", upload.array("uploadfile", 1), function (req, res) {
   try {
-    var postHTML;
     const areAllImages = req.files.every((file) =>
       file.mimetype.startsWith("image/")
     );
 
     if (!areAllImages || !req.files) {
-      return res.status(401).json({ error: "이미지 파일을 확인해주세요." });
+      return res.status(401).json({ error: "파일을 확인해주세요." });
     }
 
     aiModule.createUserHistory(
