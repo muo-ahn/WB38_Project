@@ -163,7 +163,10 @@ function parseResult(postData) {
 //반환된 모델 이름으로 질병 코드 반환하는 내부 함수
 function getDiseaseID(modelName) {
   const diseaseMap = {
-    bones: "bones\x07",
+    Mu02: "bones\x072",
+    Mu04: "bones\x074",
+    Mu05: "bones\x075",
+    Mu06: "bones\x076",
     skin_cat: "skin\x07cat",
     skin_dog: "skin\x07dog",
     Ab01: "abdominal\x071",
@@ -171,6 +174,7 @@ function getDiseaseID(modelName) {
     Ab05: "abdominal\x075",
     Ab09: "abdominal\x079",
     Ch01: "thoracic\x071",
+    Ch02: "thoracic\x072",
     eye_hack: "eye\x078",
   };
 
@@ -184,18 +188,18 @@ function ModelSelect(petbreed, api) {
       skin: ["skin_dog"],
       eye: ["eye_hack"],
       abdominal: ["Ab01", "Ab04", "Ab05", "Ab09"],
-      thoarcic: ["Ch01"],
+      thoarcic: ["Ch01", "Ch02"],
     },
     cat: {
       skin: ["skin_cat"],
       eye: ["eye_hack"],
       abdominal: ["Ab01", "Ab04", "Ab05", "Ab09"],
-      thoarcic: ["Ch01"],
+      thoarcic: ["Ch01", "Ch02"],
     },
   };
 
   return api === "bones"
-    ? ["bones"]
+    ? ["Mu02", "Mu04", "Mu05", "Mu06"]
     : (petModels[petbreed] && petModels[petbreed][api]) || null;
 }
 
@@ -222,7 +226,12 @@ async function getModelInputName(modelName) {
     modelName == "Ab04" ||
     modelName == "Ab05" ||
     modelName == "Ab09" ||
-    modelName == "Ch01"
+    modelName == "Ch01" ||
+    modelName == "Ch02" ||
+    modelName == "Mu02" ||
+    modelName == "Mu04" ||
+    modelName == "Mu05" ||
+    modelName == "Mu06"
   )
     return "input_layer";
   else if (modelName == "eye_hack") return "resnet50_input";
@@ -236,7 +245,12 @@ async function getModelInputShape(modelName) {
     modelName == "Ab04" ||
     modelName == "Ab05" ||
     modelName == "Ab09" ||
-    modelName == "Ch01"
+    modelName == "Ch01" ||
+    modelName == "Ch02" ||
+    modelName == "Mu02" ||
+    modelName == "Mu04" ||
+    modelName == "Mu05" ||
+    modelName == "Mu06"
   )
     return [1, 256, 256, 3];
   else if (modelName == "skin_dog") return [1, 112, 112, 3];
@@ -244,7 +258,6 @@ async function getModelInputShape(modelName) {
 }
 
 async function getNormalizedArray(floatArray, modelName) {
-  let outputWidth, outputHeight;
   let resize;
 
   if (
@@ -253,18 +266,17 @@ async function getNormalizedArray(floatArray, modelName) {
     modelName == "Ab04" ||
     modelName == "Ab05" ||
     modelName == "Ab09" ||
-    modelName == "Ch01"
+    modelName == "Ch01" ||
+    modelName == "Ch02" ||
+    modelName == "Mu02" ||
+    modelName == "Mu04" ||
+    modelName == "Mu05" ||
+    modelName == "Mu06"
   ) {
-    outputWidth = 256;
-    outputHeight = 256;
     resize = [256, 256];
   } else if (modelName == "skin_dog") {
-    outputWidth = 112;
-    outputHeight = 112;
     resize = [112, 112];
   } else {
-    outputWidth = 224;
-    outputHeight = 224;
     resize = [224, 224];
   }
 
