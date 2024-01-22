@@ -128,7 +128,9 @@ function parseResult(postData) {
           detectedDisease.add(DiseaseTable.getDiseaseByIndex(0, indexOffset));
           break;
         case "bones":
-          detectedDisease.add(data.modelIndex === "0" ? "정상" : "비정상");
+          if (data.modelIndex == 1) {
+            detectedDisease.add(DiseaseTable.getDiseaseByIndex(1, indexOffset));
+          }
           break;
         case "abdominal":
           if (data.modelIndex == 1) {
