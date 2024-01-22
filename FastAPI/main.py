@@ -25,24 +25,23 @@ async def preprocess(data: dict):
     except Exception as e:
         return JSONResponse({'error': str(e)})
 
-@app.post("extractimage")
-async def extractimage(video_path: dict):
+@app.post("/extractimage")
+async def extractimage(data: dict):
     try:
-        arr_image_data = []
-        video = cv2.VideoCapture(video_path)
+        arr_image_paths  = []
+        video = cv2.VideoCapture(data['video'])
         fps = int(video.get(cv2.CAP_PROP_FPS))
         frame_count = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
         
         for i in range(frame_count):
             ret, frame = video.read()
-            if ret and i % int(fps * 1) == 0:  # 1초 단위로 프레임을 저장
-            # if ret and i % int(fps / 2) == 0:  # 0.5초 단위로 프레임을 저장
-            ## frame은 이미 이미지 데이터(numpy array)인 상태
-                image = frame
-                ###이미지 데이터 배열에 저장 
-                arr_image_data.append(image)
+            if ret and i % int(fps * 1) == 0:
+                # Save the extracted image to Multer storage with numbering
+                image_filename = f'./NodeJS/uploadFiles/extracted_image{i}.jpg'
+                cv2.imwrite(image_filename, frame)
+                arr_image_paths.append(image_filename)
 
-        return JSONResponse({'extractedImage' : arr_image_data})
+        return JSONResponse({'extractedImages': arr_image_paths})
     except Exception as e:
         return JSONResponse({'error': str(e)})
 

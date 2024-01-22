@@ -51,7 +51,7 @@ class AI {
     const insertImages = async () => {
       for (const image of images) {
         try {
-          const imageData = await fs.readFile(image.path);
+          const imageData = await fs.readFile(image);
           var queryResult = [];
 
           tritonModule.TritonRequest(
