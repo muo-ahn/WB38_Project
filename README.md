@@ -60,3 +60,19 @@ Goal
         - Make a chat with those data. : Rasa 챗봇 이용해 완료
 
 }
+
+==================================================
+
+How to use
+
+1. To run Node.JS Main Server: Open the termianl. Command "cd NodeJS", "forever start Main.js"
+
+2. To run FastAPI Server: Open the terminal, Command "cd FastAPI", "uvicorn main:app --reload --host=0.0.0.0 --port=9000"
+
+3. Unzip the models.zip
+
+4. Install Triton Inference Server HTTP Port : 8000 into your local
+
+5. Run Triton Inference Sever with models
+
+6. You can run the test
