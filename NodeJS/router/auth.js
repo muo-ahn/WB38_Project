@@ -6,7 +6,6 @@ const userModule = require("../models/userClass.js");
 const passport = require("passport");
 
 router.post("/login_process", (req, res, next) => {
-  if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
   console.log(`로그인 시도 : ${req.body.username} ${req.body.password}`);
 
   passport.authenticate(
@@ -91,10 +90,9 @@ router.post("/register_process", function (req, res) {
         password,
         email,
         "local",
-        function (error, result, salt) {
-          if (error) {
-            console.error("Error:", error);
-            return res.status(401).json({ error: error });
+        function (error, result) {
+          if (error || !result) {
+            return res.status(401).json({ error: "회원가입 오류" });
           } else {
             return res.status(200).json({ message: result });
           }
@@ -107,6 +105,8 @@ router.post("/register_process", function (req, res) {
       // 이미 존재하는 id
       return res.status(401).json({ error: "이미 존재하는 id" });
     }
+  } else {
+    return res.status(401).json({ error: "입력 확인" });
   }
 });
 

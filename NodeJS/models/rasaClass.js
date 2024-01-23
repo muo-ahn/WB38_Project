@@ -3,28 +3,20 @@
 require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
 
 const axios = require("axios");
+const { request } = require("express");
 const url = process.env.Rasa_URL;
 
 class Rasa {
   async rasaRequest(diseaseid, callback) {
     try {
-      const rasaResults = [];
+      await diseaseid.forEach((disease) => {
+        requestRasa(disease, (error, rasaResponse) => {
+          if (error) return callback(error);
 
-      await Promise.all(
-        diseaseid.map((disease) => {
-          return new Promise((resolve, reject) => {
-            requestRasa(disease, (error, rasaResponse) => {
-              if (error) {
-                reject(error);
-              } else {
-                const parsedResult = parseResponseRasa(rasaResponse);
-                rasaResults.push(parsedResult);
-                resolve();
-              }
-            });
-          });
-        })
-      );
+          const parsedResult = parseResponseRasa(rasaResponse);
+          callback(null, parsedResult);
+        });
+      });
 
       callback(null, rasaResults);
     } catch (error) {
