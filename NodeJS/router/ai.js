@@ -22,6 +22,7 @@ var upload = multer({
 
 router.post("", function (req, res) {
   console.log("userHistory request");
+  if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
 
   aiModule.getUserHistory(req.body.user, function (error, images, results) {
     if (error) throw res.status(401).json({ error: "History 검색 오류" });
@@ -45,37 +46,9 @@ router.post("", function (req, res) {
   });
 });
 
-// router.get("/upload", loggedincheck.isLoggedIn, function (req, res) {
-//   var html = template.HTML(
-//     "이미지 업로드",
-//     `
-//     <form action="/ai/upload" method="post" enctype='multipart/form-data'>
-//     <p><input type="file" value="이미지 선택" name="uploadfile" multiple/></p>
-//     <p><input type="text" value="반려동물 이름 입력" name="petname"/></p>
-//     <p>
-//       <select name="petbreed">
-//         <option value="dog">반려견</option>
-//         <option value="cat">반려묘</option>
-//       </select>
-//       <p>
-//       <select name="api">
-//         <option value="skin">피부</option>
-//         <option value="bones">근골격</option>
-//         <option value="abdominal">복부</option>
-//         <option value="thoarcic">흉부</option>
-//         <option value="eye">안구</option>
-//       </select>
-//     </p>
-//     <p><input type="text" value="상담 내용 입력" name="usertext"/></p>
-//     <input class="btn" type="submit" value="이미지 업로드"/>
-//     </form>
-//     `,
-//     authCheck.statusUI(req, res)
-//   );
-//   res.send(html);
-// });
-
 router.post("/upload", upload.single("file"), async function (req, res) {
+  if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
+
   try {
     const imageRequest = [];
 

@@ -6,6 +6,7 @@ const userModule = require("../models/userClass.js");
 const passport = require("passport");
 
 router.post("/login_process", (req, res, next) => {
+  if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
   console.log(`로그인 시도 : ${req.body.username} ${req.body.password}`);
 
   passport.authenticate(
@@ -60,6 +61,7 @@ router.post(
 );
 
 router.post("/logout_process", function (req, res) {
+  if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
   userModule.find(req.body.user, req.body.provider, (error, results) => {
     if (error) return res.status(401).json({ error: "잘못된 접근" });
 
