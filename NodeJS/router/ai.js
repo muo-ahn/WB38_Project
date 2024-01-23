@@ -12,7 +12,7 @@ var storage = multer.diskStorage({
     callback(null, "./NodeJS/uploadFiles/"); //파일 저장 디렉토리
   },
   filename: function (req, file, callback) {
-    callback(null, Date.now() + "_" + file.originalname);
+    callback(null, file.originalname);
   },
 });
 
@@ -35,6 +35,7 @@ router.post("", function (req, res) {
         petbreed: results[index].petbreed,
         usertext: results[index].usertext,
         diseaseid: results[index].diseaseid,
+        createdtime: results[index].createdtime,
         image: Buffer.from(image).toString("base64"),
       };
       userHistory.history.push(history);

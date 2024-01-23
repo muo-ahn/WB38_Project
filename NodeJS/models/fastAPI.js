@@ -3,7 +3,7 @@
 const axios = require("axios");
 
 class FastAPI {
-  async FastAPIRequest(imageData, resize) {
+  async FastAPIRequest(imageData, resize, api) {
     try {
       const startTime = new Date();
       const FastAPIURL = `http://127.0.0.1:9000/${api}`;
