@@ -8,14 +8,25 @@ const url = process.env.Rasa_URL;
 class Rasa {
   async rasaRequest(diseaseid, callback) {
     try {
-      await diseaseid.forEach((disease) => {
-        requestRasa(disease, (error, rasaResponse) => {
-          if (error) return callback(error);
+      const rasaResults = [];
 
-          const parsedResult = parseResponseRasa(rasaResponse);
-          callback(null, parsedResult);
-        });
-      });
+      await Promise.all(
+        diseaseid.map((disease) => {
+          return new Promise((resolve, reject) => {
+            requestRasa(disease, (error, rasaResponse) => {
+              if (error) {
+                reject(error);
+              } else {
+                const parsedResult = parseResponseRasa(rasaResponse);
+                rasaResults.push(parsedResult);
+                resolve();
+              }
+            });
+          });
+        })
+      );
+
+      callback(null, rasaResults);
     } catch (error) {
       console.error(error);
       callback(error);
