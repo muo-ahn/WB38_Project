@@ -17,8 +17,6 @@ class Rasa {
           callback(null, parsedResult);
         });
       });
-
-      callback(null, rasaResults);
     } catch (error) {
       console.error(error);
       callback(error);

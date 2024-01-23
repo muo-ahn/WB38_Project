@@ -100,7 +100,7 @@ router.post("/upload", upload.single("file"), async function (req, res) {
       }
     );
   } catch (e) {
-    console.dir(e);
+    console.error(e);
   }
 });
 
