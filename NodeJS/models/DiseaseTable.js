@@ -82,6 +82,21 @@ class DiseaseTable {
     }
     return null;
   }
+
+  getDiseaseByValue(value) {
+    for (const partKey of Object.keys(this.DiseaseTable)) {
+      for (const diseaseKey of Object.keys(this.DiseaseTable[partKey])) {
+        if (this.DiseaseTable[partKey][diseaseKey] === value) {
+          return {
+            part: partKey,
+            disease: diseaseKey,
+          };
+        }
+      }
+    }
+
+    return null;
+  }
 }
 
 module.exports = new DiseaseTable();
