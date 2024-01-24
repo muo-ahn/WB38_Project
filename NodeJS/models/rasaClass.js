@@ -7,20 +7,18 @@ const { request } = require("express");
 const url = process.env.Rasa_URL;
 
 class Rasa {
-  async rasaRequest(diseaseid, callback) {
-    try {
-      await diseaseid.forEach((disease) => {
-        requestRasa(disease, (error, rasaResponse) => {
-          if (error) return callback(error);
+  async rasaRequest(diseaseid) {
+    const results = [];
+    for (const disease of diseaseid) {
+      await requestRasa(disease, (error, rasaResponse) => {
+        if (error) return error;
 
-          const parsedResult = parseResponseRasa(rasaResponse);
-          callback(null, parsedResult);
-        });
+        const parsedResult = parseResponseRasa(rasaResponse);
+        results.push(parsedResult);
       });
-    } catch (error) {
-      console.error(error);
-      callback(error);
     }
+
+    return results;
   }
 }
 

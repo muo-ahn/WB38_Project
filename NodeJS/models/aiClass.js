@@ -66,9 +66,14 @@ class AI {
                 async function (error, parseResult) {
                   if (error) return callback(error);
 
+                  // rasa 호출
+                  const rasaTotalResults = [];
+                  const rasaResult = await rasaModule.rasaRequest(parseResult);
+                  rasaTotalResults.push(rasaResult);
+
                   // db insert
                   for (const result of parseResult) {
-                    const queryTemp = await insertuserHistory(
+                    const queryTemp = insertuserHistory(
                       username,
                       imageData,
                       petname,
@@ -82,16 +87,7 @@ class AI {
                   }
                   if (!queryResult) return callback("db insert error");
 
-                  // rasa 호출
-                  await rasaModule.rasaRequest(
-                    parseResult,
-                    (error, rasaResult) => {
-                      if (error) return callback(error);
-
-                      const obj = Objectify(rasaResult);
-                      return callback(null, obj);
-                    }
-                  );
+                  return callback(null, rasaTotalResults);
                 }
               );
             }.bind(this)

@@ -81,24 +81,42 @@ router.post("/upload", upload.single("file"), async function (req, res) {
       }
     }
 
-    aiModule.createUserHistory(
-      req.body.username,
-      imageRequest,
-      req.body.petname,
-      req.body.petbreed,
-      req.body.api,
-      req.body.usertext,
-      function (error, rasaResult) {
-        if (error) {
-          console.error("Error:", error);
-          return res.status(401).json({ error: "파일 입력 실패" });
-        } else {
-          rasaResult.then((resolvedResult) => {
-            return res.status(200).json({ result: resolvedResult });
-          });
+    await new Promise((resolve, reject) => {
+      aiModule.createUserHistory(
+        req.user.username,
+        imageRequest,
+        req.body.petname,
+        req.body.petbreed,
+        req.body.api,
+        req.body.usertext,
+        function (error, rasaResult) {
+          if (error) {
+            console.error("Error:", error);
+
+            res.status(401).json({ error: error });
+            reject(error);
+          } else {
+            var totalResults = {
+              username: req.user.username,
+              result: [],
+            };
+
+            rasaResult.forEach((data, index) => {
+              let result = {
+                aftercare: data[index].aftercare,
+                cure: data[index].cure,
+                diseaseName: data[index].diseaseName,
+                reason: data[index].reason,
+              };
+              totalResults.result.push(result);
+            });
+
+            res.status(200).json(totalResults);
+            resolve();
+          }
         }
-      }
-    );
+      );
+    });
   } catch (e) {
     console.error(e);
   }
