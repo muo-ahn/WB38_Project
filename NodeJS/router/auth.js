@@ -61,6 +61,7 @@ router.post(
 
 router.post("/logout_process", function (req, res) {
   if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
+
   userModule.find(req.body.user, req.body.provider, (error, results) => {
     if (error) return res.status(401).json({ error: "잘못된 접근" });
 
@@ -107,6 +108,63 @@ router.post("/register_process", function (req, res) {
     }
   } else {
     return res.status(401).json({ error: "입력 확인" });
+  }
+});
+
+router.post("/update_email_process", function (req, res) {
+  if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
+
+  var username = req.body.username;
+  var password = req.body.pwd;
+  var email = req.body.email;
+
+  if (username && password && email) {
+    userModule.updateEmail(
+      username,
+      password,
+      email,
+      "local",
+      function (error, result) {
+        if (error) {
+          console.error("Error:", error);
+          return res.status(401).json({ error: error });
+        } else {
+          return res.status(200).json({ message: result });
+        }
+      }
+    );
+  }
+});
+
+router.post("/delete_account_process", function (req, res) {
+  if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
+
+  var username = req.body.username;
+  var password = req.body.pwd;
+  var password2 = req.body.pwd2;
+
+  if (password && password2) {
+    if (password == password2) {
+      userModule.deleteAccount(
+        username,
+        password,
+        "local",
+        function (error, result) {
+          if (error) {
+            console.error("Error:", error);
+            return res.status(401).json({ error: error });
+          } else {
+            req.logout(() => {
+              req.session.destroy();
+
+              return res.status(200).json({ message: result });
+            });
+          }
+        }
+      );
+    } else {
+      return res.status(401).json({ error: "비밀번호 확인" });
+    }
   }
 });
 

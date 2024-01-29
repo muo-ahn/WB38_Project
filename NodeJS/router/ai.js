@@ -76,20 +76,20 @@ router.post("/upload", upload.single("file"), async function (req, res) {
         }
       );
     } else {
-      if (!req.files) {
+      if (!req.file || !req.file.mimetype) {
         return res.status(401).json({ error: "파일을 확인해주세요." });
       }
     }
 
     await new Promise((resolve, reject) => {
       aiModule.createUserHistory(
-        req.user.username,
+        req.body.username,
         imageRequest,
         req.body.petname,
         req.body.petbreed,
         req.body.api,
         req.body.usertext,
-        function (error, rasaResult) {
+        function (error, rasaResult, historyIDs) {
           if (error) {
             console.error("Error:", error);
 
@@ -97,8 +97,9 @@ router.post("/upload", upload.single("file"), async function (req, res) {
             reject(error);
           } else {
             var totalResults = {
-              username: req.user.username,
+              username: req.body.username,
               result: [],
+              historyID: [],
             };
 
             rasaResult.forEach((data, index) => {
@@ -111,6 +112,10 @@ router.post("/upload", upload.single("file"), async function (req, res) {
               totalResults.result.push(result);
             });
 
+            historyIDs.forEach((data) => {
+              totalResults.historyID.push(data.historyid);
+            });
+
             res.status(200).json(totalResults);
             resolve();
           }
@@ -120,6 +125,19 @@ router.post("/upload", upload.single("file"), async function (req, res) {
   } catch (e) {
     console.error(e);
   }
+});
+
+router.post("/delete", async function (req, res) {
+  if (!req.body.user) return res.status(401).json({ error: "잘못된 접근" });
+
+  const username = req.body.user;
+  const historyid = req.body.historyid;
+
+  aiModule.deleteUserHistory(username, historyid, (error, results) => {
+    if (error) return res.status(401).json({ error: "히스토리 삭제 오류" });
+
+    return res.status(200).json({ message: "히스토리 삭제 성공" });
+  });
 });
 
 module.exports = router;

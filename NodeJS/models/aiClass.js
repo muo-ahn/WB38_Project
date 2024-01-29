@@ -52,7 +52,7 @@ class AI {
       for (const image of images) {
         try {
           const imageData = await fs.readFile(image);
-          var queryResult = [];
+          var historyIDs = [];
 
           tritonModule.TritonRequest(
             imageData,
@@ -73,7 +73,7 @@ class AI {
 
                   // db insert
                   for (const result of parseResult) {
-                    const queryTemp = insertuserHistory(
+                    const historyid = await insertuserHistory(
                       username,
                       imageData,
                       petname,
@@ -83,11 +83,11 @@ class AI {
                       queryAsync
                     );
 
-                    queryResult.push(queryTemp);
+                    historyIDs.push(historyid);
                   }
-                  if (!queryResult) return callback("db insert error");
+                  if (!historyIDs) return callback("db insert error");
 
-                  return callback(null, rasaTotalResults);
+                  return callback(null, rasaTotalResults, historyIDs);
                 }
               );
             }.bind(this)
@@ -100,9 +100,20 @@ class AI {
 
     insertImages();
   }
+
+  deleteUserHistory(username, historyid, callback) {
+    this.db.query(
+      "DELETE FROM userHistory where username = ? AND historyid = ?",
+      [username, historyid],
+      (error, results) => {
+        if (error) return callback(error);
+
+        return callback(null, results);
+      }
+    );
+  }
 }
 
-// userHistory insert function
 async function insertuserHistory(
   username,
   imageData,
@@ -122,18 +133,12 @@ async function insertuserHistory(
         [username, imageData, petname, petbreed, usertext]
       );
 
-  return queryResult;
-}
-
-async function Objectify(rasaResult) {
-  console.log(rasaResult);
-
-  return (obj = {
-    aftercare: rasaResult.aftercare,
-    cure: rasaResult.cure,
-    diseaseName: rasaResult.diseaseName,
-    reason: rasaResult.reason,
-  });
+  if (queryResult.affectedRows > 0) {
+    const lastInsertId = queryResult.insertId;
+    return { success: true, historyid: lastInsertId };
+  } else {
+    return { success: false, error: "History Insert Error" };
+  }
 }
 
 module.exports = new AI();

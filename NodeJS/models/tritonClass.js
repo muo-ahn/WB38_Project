@@ -177,7 +177,7 @@ function getDiseaseID(modelName) {
     Ab09: "abdominal\x079",
     Ch01: "thoracic\x071",
     Ch02: "thoracic\x072",
-    eye_hack: "eye\x078",
+    Ey08: "eye\x078",
   };
 
   return diseaseMap[modelName] || "error";
@@ -188,13 +188,13 @@ function ModelSelect(petbreed, api) {
   const petModels = {
     dog: {
       skin: ["skin_dog"],
-      eye: ["eye_hack"],
+      eye: ["Ey08"],
       abdominal: ["Ab01", "Ab04", "Ab05", "Ab09"],
       thoarcic: ["Ch01", "Ch02"],
     },
     cat: {
       skin: ["skin_cat"],
-      eye: ["eye_hack"],
+      eye: ["Ey08"],
       abdominal: ["Ab01", "Ab04", "Ab05", "Ab09"],
       thoarcic: ["Ch01", "Ch02"],
     },
@@ -236,7 +236,6 @@ async function getModelInputName(modelName) {
     modelName == "Mu06"
   )
     return "input_layer";
-  else if (modelName == "eye_hack") return "resnet50_input";
   else return "inception_resnet_v2_input";
 }
 
