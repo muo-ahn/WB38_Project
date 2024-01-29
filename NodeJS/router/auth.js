@@ -111,6 +111,33 @@ router.post("/register_process", function (req, res) {
   }
 });
 
+router.post("/update_password_process", function (req, res) {
+  var username = req.body.username;
+  var password = req.body.password;
+  var password2 = req.body.password2;
+
+  if (username && password && password2) {
+    userModule.updatePassword(
+      username,
+      password,
+      password2,
+      "local",
+      function (error, result) {
+        if (error) {
+          console.error("Error:", error);
+          res.send(
+            `<script type="text/javascript">alert(${error}); document.location.href="../";</script>`
+          );
+        } else {
+          res.send(
+            `<script type="text/javascript">alert(${result}); document.location.href="../";</script>`
+          );
+        }
+      }
+    );
+  }
+});
+
 router.post("/update_email_process", function (req, res) {
   if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
 
@@ -140,8 +167,8 @@ router.post("/delete_account_process", function (req, res) {
   if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
 
   var username = req.body.username;
-  var password = req.body.pwd;
-  var password2 = req.body.pwd2;
+  var password = req.body.password;
+  var password2 = req.body.password2;
 
   if (password && password2) {
     if (password == password2) {
