@@ -29,7 +29,11 @@ router.post("/login_process", (req, res, next) => {
         req.session.save(() => {
           return res
             .status(200)
-            .json({ user: user.username, provider: user.provider });
+            .json({
+              user: user.username,
+              provider: user.provider,
+              email: user.email,
+            });
         });
       });
     }

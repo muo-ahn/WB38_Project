@@ -179,9 +179,9 @@ function getDiseaseID(modelName) {
     Ab09: "abdominal\x079",
     Ch01: "thoracic\x071",
     Ch02: "thoracic\x072",
-    cat_Ey07: "eye\x077",
-    cat_Ey08: "eye\x078",
-    cat_Ey10: "eye\x010",
+    Ey07: "eye\x077",
+    Ey08: "eye\x078",
+    Ey10: "eye\x010",
   };
 
   return diseaseMap[modelName] || "error";
@@ -192,24 +192,13 @@ function ModelSelect(petbreed, api) {
   const petModels = {
     dog: {
       skin: ["skin_dog"],
-      eye: [
-        "dog_Ey01",
-        "dog_Ey02",
-        "dog_Ey03",
-        "dog_Ey04",
-        "dog_Ey05",
-        "dog_Ey06",
-        "dog_Ey07",
-        "dog_Ey08",
-        "dog_Ey10",
-        "dog_Ey11",
-      ],
+      eye: ["Ey07", "Ey08", "Ey10"],
       abdominal: ["Ab01", "Ab04", "Ab05", "Ab09"],
       thoarcic: ["Ch01", "Ch02"],
     },
     cat: {
       skin: ["skin_cat"],
-      eye: ["cat_Ey07", "cat_Ey08", "cat_Ey10"],
+      eye: ["Ey07", "Ey08", "Ey10"],
       abdominal: ["Ab01", "Ab04", "Ab05", "Ab09"],
       thoarcic: ["Ch01", "Ch02"],
     },
