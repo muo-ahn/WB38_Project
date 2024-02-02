@@ -92,7 +92,7 @@ router.post("/upload", upload.single("file"), async function (req, res) {
         req.body.petbreed,
         req.body.api,
         req.body.usertext,
-        function (error, rasaResult, historyIDs) {
+        function (error, rasaResult, imporvement, historyIDs) {
           if (error) {
             console.error("Error:", error);
 
@@ -106,11 +106,13 @@ router.post("/upload", upload.single("file"), async function (req, res) {
 
             rasaResult.forEach((data, index) => {
               let result = {
-                historyID: historyIDs[index].historyid,
+                historyID: historyIDs[index],
                 aftercare: data[index].aftercare,
                 cure: data[index].cure,
                 diseaseName: data[index].diseaseName,
                 reason: data[index].reason,
+                possibility: data[index].possibility,
+                imporvement: imporvement,
               };
               totalResults.result.push(result);
             });

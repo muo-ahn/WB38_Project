@@ -54,7 +54,7 @@ class AI {
       for (const image of images) {
         try {
           const imageData = await fs.readFile(image);
-          var queryResult = [];
+          var historyids = [];
 
           await tritonModule.TritonRequest(
             imageData,
@@ -69,9 +69,10 @@ class AI {
                   if (error) return callback(error);
 
                   const rasaTotalResults = [];
+                  let imporvement = 0;
 
                   for (const result of parseResult) {
-                    const queryTemp = insertuserHistory(
+                    const historyid = insertuserHistory(
                       username,
                       imageData,
                       petname,
@@ -82,17 +83,31 @@ class AI {
                       queryAsync
                     );
 
-                    queryResult.push(queryTemp);
+                    historyids.push(historyid);
 
                     const rasaResult = await rasaModule.rasaRequest(
                       [result.disease],
                       result.possResult
                     );
                     rasaTotalResults.push(rasaResult);
+
+                    //호전성 검사
+                    const temp = await checkImprovement(
+                      queryAsync,
+                      username,
+                      petname,
+                      result.disease
+                    );
+                    imporvement = temp;
                   }
                   if (!queryResult) return callback("db insert error");
 
-                  return callback(null, rasaTotalResults);
+                  return callback(
+                    null,
+                    rasaTotalResults,
+                    imporvement,
+                    historyids
+                  );
                 }
               );
             }.bind(this)
@@ -148,7 +163,48 @@ async function insertuserHistory(
         [username, imageData, petname, petbreed, usertext]
       );
 
-  return queryResult;
+  const insertedRow = await queryAsync("SELECT LAST_INSERT_ID() as historyid");
+  return insertedRow[0].historyid;
+}
+
+// index : 1~5
+// index, 3 : 증상 지속, default
+// index, 1 ~ 2 : 증상 악화
+// index, 4 ~ 5 : 증상 완화
+async function checkImprovement(queryAsync, username, petname, diseaseid) {
+  try {
+    const results = await queryAsync(
+      "SELECT * FROM userHistory where username = ? AND petname = ? AND diseaseid = ?",
+      [username, petname, diseaseid]
+    );
+
+    let currentIndex = 3;
+
+    for (let innerIndex = 0; innerIndex < results.length - 1; innerIndex++) {
+      const temp = results[innerIndex].diseasepossibility;
+      if (results[innerIndex + 1]?.diseasepossibility - temp >= 5) {
+        currentIndex++;
+      } else if (results[innerIndex + 1]?.diseasepossibility - temp >= 10) {
+        currentIndex = currentIndex + 2;
+      } else if (results[innerIndex + 1]?.diseasepossibility - temp === 0) {
+        currentIndex = 3;
+      } else if (results[innerIndex + 1]?.diseasepossibility - temp <= -5) {
+        currentIndex--;
+      } else {
+        currentIndex = innerIndex - 2;
+      }
+
+      if (currentIndex <= 0) {
+        currentIndex = 1;
+      } else if (currentIndex >= 5) {
+        currentIndex = 5;
+      }
+    }
+
+    return currentIndex;
+  } catch (error) {
+    throw error;
+  }
 }
 
 module.exports = new AI();
