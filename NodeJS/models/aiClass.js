@@ -7,6 +7,8 @@ const util = require("util");
 
 const tritonModule = require("./tritonClass.js");
 const rasaModule = require("./rasaClass.js");
+const { parse } = require("path");
+const { error } = require("console");
 
 class AI {
   constructor() {
@@ -52,9 +54,9 @@ class AI {
       for (const image of images) {
         try {
           const imageData = await fs.readFile(image);
-          var historyIDs = [];
+          var queryResult = [];
 
-          tritonModule.TritonRequest(
+          await tritonModule.TritonRequest(
             imageData,
             petbreed,
             api,
@@ -66,28 +68,31 @@ class AI {
                 async function (error, parseResult) {
                   if (error) return callback(error);
 
-                  // rasa 호출
                   const rasaTotalResults = [];
-                  const rasaResult = await rasaModule.rasaRequest(parseResult);
-                  rasaTotalResults.push(rasaResult);
 
-                  // db insert
                   for (const result of parseResult) {
-                    const historyid = await insertuserHistory(
+                    const queryTemp = insertuserHistory(
                       username,
                       imageData,
                       petname,
                       petbreed,
                       usertext,
-                      result,
+                      result.disease,
+                      result.possResult,
                       queryAsync
                     );
 
-                    historyIDs.push(historyid);
-                  }
-                  if (!historyIDs) return callback("db insert error");
+                    queryResult.push(queryTemp);
 
-                  return callback(null, rasaTotalResults, historyIDs);
+                    const rasaResult = await rasaModule.rasaRequest(
+                      [result.disease],
+                      result.possResult
+                    );
+                    rasaTotalResults.push(rasaResult);
+                  }
+                  if (!queryResult) return callback("db insert error");
+
+                  return callback(null, rasaTotalResults);
                 }
               );
             }.bind(this)
@@ -114,6 +119,7 @@ class AI {
   }
 }
 
+// userHistory insert function
 async function insertuserHistory(
   username,
   imageData,
@@ -121,24 +127,28 @@ async function insertuserHistory(
   petbreed,
   usertext,
   diseaseid,
+  diseasepossibility,
   queryAsync
 ) {
   const queryResult = diseaseid
     ? await queryAsync(
-        "INSERT INTO userHistory (username, image, petname, petbreed, usertext, diseaseid) VALUES(?,?,?,?,?,?)",
-        [username, imageData, petname, petbreed, usertext, diseaseid]
+        "INSERT INTO userHistory (username, image, petname, petbreed, usertext, diseaseid, diseasepossibility) VALUES(?,?,?,?,?,?,?)",
+        [
+          username,
+          imageData,
+          petname,
+          petbreed,
+          usertext,
+          diseaseid,
+          diseasepossibility,
+        ]
       )
     : await queryAsync(
         "INSERT INTO userHistory (username, image, petname, petbreed, usertext) VALUES(?,?,?,?,?)",
         [username, imageData, petname, petbreed, usertext]
       );
 
-  if (queryResult.affectedRows > 0) {
-    const lastInsertId = queryResult.insertId;
-    return { success: true, historyid: lastInsertId };
-  } else {
-    return { success: false, error: "History Insert Error" };
-  }
+  return queryResult;
 }
 
 module.exports = new AI();

@@ -26,6 +26,8 @@ router.post("", function (req, res) {
 
   aiModule.getUserHistory(req.body.user, function (error, images, results) {
     if (error) throw res.status(401).json({ error: "History 검색 오류" });
+    if (!results) return res.status(200);
+
     var userHistory = {
       username: results[0].username,
       history: [],
@@ -42,12 +44,13 @@ router.post("", function (req, res) {
       userHistory.history.push(history);
     });
 
-    res.status(200).json({ userHistory });
+    return res.status(200).json({ userHistory });
   });
 });
 
 router.post("/upload", upload.single("file"), async function (req, res) {
-  if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
+  if (!req.body.username) res.status(401).json({ error: "잘못된 접근" });
+  console.log("Request : ", req.body.username);
 
   try {
     const imageRequest = [];
@@ -99,21 +102,17 @@ router.post("/upload", upload.single("file"), async function (req, res) {
             var totalResults = {
               username: req.body.username,
               result: [],
-              historyID: [],
             };
 
             rasaResult.forEach((data, index) => {
               let result = {
+                historyID: historyIDs[index].historyid,
                 aftercare: data[index].aftercare,
                 cure: data[index].cure,
                 diseaseName: data[index].diseaseName,
                 reason: data[index].reason,
               };
               totalResults.result.push(result);
-            });
-
-            historyIDs.forEach((data) => {
-              totalResults.historyID.push(data.historyid);
             });
 
             res.status(200).json(totalResults);

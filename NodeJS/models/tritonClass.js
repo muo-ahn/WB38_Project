@@ -12,8 +12,6 @@ class Triton {
   async TritonRequest(imageData, petbreed, api, callback) {
     //triton server로 request
     try {
-      const totalStartTime = new Date();
-
       const modelsArray = await ModelSelect(petbreed, api);
       const processedImageData = await preprocessImageData(
         imageData,
@@ -57,9 +55,6 @@ class Triton {
       );
 
       console.log("Triton Output : " + responses);
-      const totalEndTime = new Date();
-
-      console.log(`Total request ${totalEndTime - totalStartTime}ms`);
       return callback(null, responses);
     } catch (error) {
       console.error("Error : " + error);
@@ -111,56 +106,59 @@ class Triton {
 // 후처리된 추론 결과를 파싱
 function parseResult(postData) {
   // 원하는 결과 값 :
-  //  질병이 있는 경우 : [ [질환 코드], [질환 코드] ] , index가 0인 경우, 병
-  //  질병이 없는 경우 : [ nor ] 로 통일.
+  //  질병이 있는 경우 : [ { disease: 질환 코드, possResult: number }, ... ] , index가 0인 경우, 병
+  //  질병이 없는 경우 : [ { disease: "nor", possResult: number } ]
 
-  // dims == 2 인 경우, [0] : 정상 확률, [1] : 질환 확률
-  const detectedDisease = new Set();
+  const detectedDiseases = [];
+
   postData.forEach((data) => {
     const modelPart = data.modelName.split("\x07");
 
-    if (data.possResult >= 53) {
+    if (data.possResult >= 40) {
       const indexOffset =
         data.modelType === "multi" ? data.modelIndex : modelPart[1] - 1;
 
+      let diseaseCode;
       switch (modelPart[0]) {
         case "skin":
-          detectedDisease.add(DiseaseTable.getDiseaseByIndex(0, indexOffset));
+          diseaseCode = DiseaseTable.getDiseaseByIndex(0, indexOffset);
           break;
         case "bones":
           if (data.modelIndex == 1) {
-            detectedDisease.add(DiseaseTable.getDiseaseByIndex(1, indexOffset));
+            diseaseCode = DiseaseTable.getDiseaseByIndex(1, indexOffset);
           }
           break;
         case "abdominal":
           if (data.modelIndex == 1) {
-            detectedDisease.add(DiseaseTable.getDiseaseByIndex(2, indexOffset));
+            diseaseCode = DiseaseTable.getDiseaseByIndex(2, indexOffset);
           }
           break;
         case "thoracic":
           if (data.modelIndex == 1) {
-            detectedDisease.add(DiseaseTable.getDiseaseByIndex(3, indexOffset));
+            diseaseCode = DiseaseTable.getDiseaseByIndex(3, indexOffset);
           }
           break;
         case "eye":
           if (data.modelIndex == 1) {
-            detectedDisease.add(DiseaseTable.getDiseaseByIndex(4, indexOffset));
+            diseaseCode = DiseaseTable.getDiseaseByIndex(4, indexOffset);
           }
           break;
         default:
-          detectedDisease.add("nor");
+          diseaseCode = "nor";
           break;
       }
-    } else {
-      detectedDisease.add("nor");
+
+      detectedDiseases.push({
+        disease: diseaseCode,
+        possResult: data.possResult,
+      });
     }
   });
 
-  if (detectedDisease.size == 1) {
-    return Array.from(detectedDisease);
+  if (detectedDiseases.length > 0) {
+    return detectedDiseases;
   } else {
-    detectedDisease.delete("nor");
-    return Array.from(detectedDisease);
+    return [{ disease: "nor", possResult: 0 }]; // You might want to set a default possResult value here
   }
 }
 

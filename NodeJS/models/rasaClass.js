@@ -3,17 +3,16 @@
 require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
 
 const axios = require("axios");
-const { request } = require("express");
 const url = process.env.Rasa_URL;
 
 class Rasa {
-  async rasaRequest(diseaseid) {
+  async rasaRequest(diseaseid, possResult) {
     const results = [];
     for (const disease of diseaseid) {
       await requestRasa(disease, (error, rasaResponse) => {
         if (error) return error;
 
-        const parsedResult = parseResponseRasa(rasaResponse);
+        const parsedResult = parseResponseRasa(rasaResponse, possResult);
         results.push(parsedResult);
       });
     }
@@ -22,7 +21,7 @@ class Rasa {
   }
 }
 
-function parseResponseRasa(response) {
+function parseResponseRasa(response, possResult) {
   const resultTemp = [];
 
   //데이터 파싱
@@ -31,6 +30,7 @@ function parseResponseRasa(response) {
   resultTemp.reason = `${disease_text[1]}`;
   resultTemp.cure = `${disease_text[2]}`;
   resultTemp.aftercare = `${disease_text[3]}`;
+  resultTemp.possibility = possResult;
 
   return resultTemp;
 }

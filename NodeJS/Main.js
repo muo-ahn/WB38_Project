@@ -2,6 +2,8 @@
 
 require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
 
+const http = require("http");
+const io = require("socket.io");
 const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
@@ -29,8 +31,12 @@ const NaverStrategy = require("./passport/naverStrategy.js");
 const authRouter = require("./router/auth.js");
 const aiRouter = require("./router/ai.js");
 
+const aiModule = require("./models/aiClass.js");
+const { error } = require("console");
+
 const app = express();
-const port = 3005;
+const restapi_port = 3005;
+const socket_port = 3006;
 
 app.use(cors(corsOption));
 app.use(express.json());
@@ -69,6 +75,51 @@ passportConfig();
 app.use("/auth", authRouter); // 인증 라우터
 app.use("/ai", aiRouter); // 파일 라우터
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+app.listen(restapi_port, () => {
+  console.log(`RestAPI Server Listening on ${restapi_port}`);
+});
+
+//socket 서버
+const server = http.createServer();
+const socketServer = io(server);
+
+socketServer.on("connection", (socket) => {
+  console.log("Socket Client Connected");
+
+  socket.on("image", async (data) => {
+    // Process the received image data, e.g., save it to disk
+    console.log("Received image:", data.image);
+
+    try {
+      aiModule.createUserHistory(
+        data.username,
+        data.image,
+        data.petname,
+        data.petbreed,
+        data.api,
+        data.usertext,
+        (error, results, historyids) => {
+          if (error)
+            return socket.emit("text", { error: error, status: "error" });
+
+          return socket.emit("text", {
+            result: results,
+            historyid: historyids,
+            status: "ok",
+          });
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      return socket.emit("text", { error: error, status: "error" });
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
+
+server.listen(socket_port, () => {
+  console.log(`Socket Server Listening on ${socket_port}`);
 });
