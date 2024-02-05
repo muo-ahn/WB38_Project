@@ -47,13 +47,18 @@ router.post("", async function (req, res) {
       improvement,
       req.body.text,
       async (error, rasaResult) => {
-        if (error) return res.status(401).json({ error: error });
+        if (error) {
+          const response = await callGpt35(req.body.text);
+          if (response) {
+            return res.status(200).json({ answer: response });
+          } else {
+            return res.status(401).json({ error: "gpt error" });
+          }
+        }
 
         return res.status(200).json({ answer: rasaResult });
       }
     );
-
-    res.status(200);
   }
 
   chatModule.getDBdata(

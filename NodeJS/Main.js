@@ -62,15 +62,15 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use((req, res, next) => {
-  const clientIP = req.ip;
-  console.log(`Client IP Address: ${clientIP}`);
-  if (clientIP == "::ffff:10.101.70.130") {
-    next();
-  } else {
-    res.status(403).send("Forbidden Access");
-  }
-});
+// app.use((req, res, next) => {
+//   const clientIP = req.ip;
+//   console.log(`Client IP Address: ${clientIP}`);
+//   if (clientIP == "::ffff:10.101.70.130") {
+//     next();
+//   } else {
+//     res.status(403).send("Forbidden Access");
+//   }
+// });
 
 LocalStrategy();
 KakaoStrategy();
