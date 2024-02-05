@@ -68,7 +68,6 @@ class AI {
                 async function (error, parseResult) {
                   if (error) return callback(error);
 
-                  const rasaTotalResults = [];
                   let imporvement = 0;
 
                   for (const result of parseResult) {
@@ -85,12 +84,6 @@ class AI {
 
                     historyids.push(historyid);
 
-                    const rasaResult = await rasaModule.rasaRequest(
-                      [result.disease],
-                      result.possResult
-                    );
-                    rasaTotalResults.push(rasaResult);
-
                     //호전성 검사
                     const temp = await checkImprovement(
                       queryAsync,
@@ -100,14 +93,8 @@ class AI {
                     );
                     imporvement = temp;
                   }
-                  if (!queryResult) return callback("db insert error");
 
-                  return callback(
-                    null,
-                    rasaTotalResults,
-                    imporvement,
-                    historyids
-                  );
+                  return callback(null, parseResult, imporvement, historyids);
                 }
               );
             }.bind(this)
@@ -155,7 +142,7 @@ class AI {
                 let imporvement = 0;
 
                 for (const result of parseResult) {
-                  const historyid = insertuserHistory(
+                  const historyid = await insertuserHistory(
                     username,
                     imageData,
                     petname,
@@ -167,12 +154,6 @@ class AI {
                   );
 
                   historyids.push(historyid);
-
-                  const rasaResult = await rasaModule.rasaRequest(
-                    [result.disease],
-                    result.possResult
-                  );
-                  rasaTotalResults.push(rasaResult);
 
                   //호전성 검사
                   const temp = await checkImprovement(

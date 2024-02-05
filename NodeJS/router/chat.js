@@ -1,25 +1,75 @@
 // chat.js
 
+require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
+
 var express = require("express");
 var router = express.Router();
 const chatModule = require("../models/chatClass.js");
+const rasaModule = require("../models//rasaClass.js");
+
+const { Configuration, OpenAIApi } = require("openai");
+
+const callGpt35 = async (prompt) => {
+  const configiration = new Configuration({
+    apiKey: process.env.OPENAI_API_KEY,
+    organization: process.env.OPENAI_ORGANIZATION,
+  });
+  try {
+    const openai = new OpenAIApi(configiration);
+
+    const response = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    return response.data.choices[0].message;
+  } catch (error) {
+    console.error("gpt35 error :", error);
+  }
+};
 
 router.post("", async function (req, res) {
   if (!req.body) res.status(401).json({ error: "잘못된 접근" });
 
-  const type1 = req.body.type1;
-  const type2 = req.body.type2;
-  const question = req.body.question;
+  if (req.body.text) {
+    let diseaseid, possibility, improvement;
+    req.body.diseaseid ? (diseaseid = req.body.diseaseid) : (diseaseid = 0);
+    req.body.possibility
+      ? (possibility = req.body.possibility)
+      : (possibility = 0);
+    req.body.improvement
+      ? (improvement = req.body.improvement)
+      : (improvement = 0);
 
-  chatModule.getDBdata(type1, type2, question, async (error, results) => {
-    if (error) res.status(401).json({ error: error });
+    await rasaModule.rasaRequest(
+      diseaseid,
+      possibility,
+      improvement,
+      req.body.text,
+      async (error, rasaResult) => {
+        if (error) return res.status(401).json({ error: error });
 
-    const answer = [];
-    results.forEach((result) => {
-      answer.push(result.RESULT);
-    });
-    res.status(200).json({ answer: answer });
-  });
+        return res.status(200).json({ answer: rasaResult });
+      }
+    );
+
+    res.status(200);
+  }
+
+  chatModule.getDBdata(
+    req.body.type1,
+    req.body.type2,
+    req.body.question,
+    async (error, results) => {
+      if (error) return res.status(401).json({ error: error });
+
+      const answer = [];
+      results.forEach((result) => {
+        answer.push(result.RESULT);
+      });
+      return res.status(200).json({ answer: answer });
+    }
+  );
 });
 
 module.exports = router;

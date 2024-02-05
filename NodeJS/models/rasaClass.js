@@ -3,67 +3,53 @@
 require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
 
 const axios = require("axios");
-const url = process.env.Rasa_URL;
+const { request } = require("express");
+
+const rasa = axios.create({
+  baseURL: process.env.Rasa_URL,
+  timeout: 10000,
+});
 
 class Rasa {
-  async rasaRequest(diseaseid, possResult) {
-    const results = [];
-    for (const disease of diseaseid) {
-      await requestRasa(disease, (error, rasaResponse) => {
-        if (error) return error;
+  async rasaRequest(diseaseid, possibility, imporvement, text, callback) {
+    try {
+      const data = preprocessData(diseaseid, possibility, imporvement, text);
 
-        const parsedResult = parseResponseRasa(rasaResponse, possResult);
-        results.push(parsedResult);
+      const totalResult = [];
+      await requestRasa(data).then((responses) => {
+        for (const res of responses) {
+          console.log(res.text);
+          totalResult.push(res.text);
+        }
+        callback(null, totalResult);
       });
+    } catch (error) {
+      callback(error);
     }
-
-    return results;
   }
 }
 
-function parseResponseRasa(response, possResult) {
-  const resultTemp = [];
+async function requestRasa(text, sender = "default") {
+  try {
+    const response = await rasa.post("/webhooks/rest/webhook", {
+      message: text,
+      sender: sender,
+    });
 
-  //데이터 파싱
-  const disease_text = response.split("\x07"); //\a으로 분리
-  resultTemp.diseaseName = `${disease_text[0]}`;
-  resultTemp.reason = `${disease_text[1]}`;
-  resultTemp.cure = `${disease_text[2]}`;
-  resultTemp.aftercare = `${disease_text[3]}`;
-  resultTemp.possibility = possResult;
-
-  return resultTemp;
+    // Rasa 서버의 응답을 반환합니다.
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-async function requestRasa(code, callback) {
-  const Code = code;
-  const payload = {
-    next_action: "action_hello_world",
-    tracker: {
-      sender_id: "user_id",
-      slots: { disease_code: Code },
-      latest_message: {
-        intent: { name: "DiseaseCode_Test", confidence: 1.0 },
-        entities: [{ entity: "disease_code", value: "mu01" }],
-        text: "mu01",
-        message_id: "1234",
-        metadata: {},
-      },
-    },
-  };
+async function preprocessData(diseaseid, possibility, imporvement, text) {
+  if (!diseaseid) diseaseid = "nor";
+  if (!possibility) possibility = 0;
+  if (!imporvement) imporvement = 0;
+  if (!text) text = "";
 
-  await axios
-    .post(url, payload, { headers: { "Content-Type": "application/json" } })
-    .then((response) => {
-      // 'text' 키에 해당하는 값을 추출하고 출력합니다.
-      const text = response.data.responses[0].text;
-
-      callback(null, text);
-    })
-    .catch((error) => {
-      console.error(error);
-      callback(error);
-    });
+  return `${diseaseid}, ${possibility}, ${imporvement}, ${text}`;
 }
 
 module.exports = new Rasa();

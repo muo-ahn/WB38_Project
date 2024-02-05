@@ -1,9 +1,7 @@
 // chatClass.js
 
 require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
-const { error } = require("console");
 const mysql = require("mysql");
-const fs = require("fs").promises;
 const util = require("util");
 
 class chatClass {
