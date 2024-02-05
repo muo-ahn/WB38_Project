@@ -71,7 +71,7 @@ class AI {
                   let imporvement = 0;
 
                   for (const result of parseResult) {
-                    const historyid = insertuserHistory(
+                    const historyid = await insertuserHistory(
                       username,
                       imageData,
                       petname,
