@@ -65,6 +65,35 @@ Goal
 
 How to use
 
+0. Craete table
+
+CREATE TABLE userTable (
+id int(12) NOT NULL AUTO_INCREMENT,
+username varchar(50) NOT NULL,
+password varchar(255) NOT NULL DEFAULT 'no_password_set',
+salt varchar(255) NOT NULL DEFAULT 'no_salt_set',
+email varchar(255),
+provider varchar(255) DEFAULT 'local',
+PRIMARY KEY(id),
+INDEX idx_username (username)
+) charset=utf8;
+
+CREATE TABLE userHistory (
+username VARCHAR(50) NOT NULL,
+image LONGBLOB NOT NULL,
+petname VARCHAR(50) NOT NULL,
+petbreed VARCHAR(50) NOT NULL,
+usertext TEXT NOT NULL,
+diseaseid VARCHAR(10) default 'nor',
+historyid INT(12) NOT NULL auto_increment,
+createdtime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+PRIMARY KEY(historyid),
+FOREIGN KEY (username) REFERENCES userTable(username)
+) CHARSET=utf8;
+
+ALTER TABLE userHistory
+ADD COLUMN diseasepossibility FLOAT DEFAULT 0;
+
 1. To run Node.JS Main Server: Open the termianl. Command "cd NodeJS", "forever start Main.js"
 
 2. To run FastAPI Server: Open the terminal, Command "cd FastAPI", "uvicorn main:app --reload --host=0.0.0.0 --port=9000"

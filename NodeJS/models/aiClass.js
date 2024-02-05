@@ -121,6 +121,87 @@ class AI {
     insertImages();
   }
 
+  //실시간 스트리밍
+  createUserHistoryLive(
+    username,
+    images,
+    petname,
+    petbreed,
+    api,
+    usertext,
+    callback
+  ) {
+    const queryAsync = this.queryAsync;
+
+    // async
+    const insertImages = async () => {
+      try {
+        const imageData = images;
+        var historyids = [];
+
+        await tritonModule.TritonRequest(
+          imageData,
+          petbreed,
+          api,
+          async function (error, responses) {
+            if (error) return callback(error);
+
+            await tritonModule.postprocessResponses(
+              responses,
+              async function (error, parseResult) {
+                if (error) return callback(error);
+
+                const rasaTotalResults = [];
+                let imporvement = 0;
+
+                for (const result of parseResult) {
+                  const historyid = insertuserHistory(
+                    username,
+                    imageData,
+                    petname,
+                    petbreed,
+                    usertext,
+                    result.disease,
+                    result.possResult,
+                    queryAsync
+                  );
+
+                  historyids.push(historyid);
+
+                  const rasaResult = await rasaModule.rasaRequest(
+                    [result.disease],
+                    result.possResult
+                  );
+                  rasaTotalResults.push(rasaResult);
+
+                  //호전성 검사
+                  const temp = await checkImprovement(
+                    queryAsync,
+                    username,
+                    petname,
+                    result.disease
+                  );
+                  imporvement = temp;
+                }
+
+                return callback(
+                  null,
+                  rasaTotalResults,
+                  imporvement,
+                  historyids
+                );
+              }
+            );
+          }.bind(this)
+        );
+      } catch (error) {
+        return callback(error);
+      }
+    };
+
+    insertImages();
+  }
+
   deleteUserHistory(username, historyid, callback) {
     this.db.query(
       "DELETE FROM userHistory where username = ? AND historyid = ?",

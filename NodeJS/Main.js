@@ -18,6 +18,7 @@ const sessionStore = new MySQLStore({
 
 const corsOption = {
   origin: true,
+  method: ["GET", "POST"],
   credentials: true,
 };
 
@@ -30,6 +31,7 @@ const NaverStrategy = require("./passport/naverStrategy.js");
 
 const authRouter = require("./router/auth.js");
 const aiRouter = require("./router/ai.js");
+const chatRouter = require("./router/chat.js");
 
 const aiModule = require("./models/aiClass.js");
 const { error } = require("console");
@@ -37,6 +39,9 @@ const { error } = require("console");
 const app = express();
 const restapi_port = 3005;
 const socket_port = 3006;
+
+const server = http.createServer(app);
+const socketServer = io(server);
 
 app.use(cors(corsOption));
 app.use(express.json());
@@ -74,29 +79,24 @@ passportConfig();
 
 app.use("/auth", authRouter); // 인증 라우터
 app.use("/ai", aiRouter); // 파일 라우터
+app.use("/chat", chatRouter); //채팅 상담 라우터
 
 app.listen(restapi_port, () => {
   console.log(`RestAPI Server Listening on ${restapi_port}`);
 });
 
 //socket 서버
-const server = http.createServer();
-const socketServer = io(server);
-
 socketServer.on("connection", (socket) => {
   console.log("Socket Client Connected");
 
   socket.on("image", async (data) => {
-    // Process the received image data, e.g., save it to disk
-    console.log("Received image:", data.image);
-
     try {
-      aiModule.createUserHistory(
-        data.username,
+      aiModule.createUserHistoryLive(
+        data.user,
         data.image,
         data.petname,
-        data.petbreed,
-        data.api,
+        data.petbreed.type,
+        data.api.type,
         data.usertext,
         (error, results, historyids) => {
           if (error)
@@ -116,7 +116,7 @@ socketServer.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("Client disconnected");
+    console.log("Socket Client Disconnected");
   });
 });
 
