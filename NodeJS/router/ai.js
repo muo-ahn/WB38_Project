@@ -26,7 +26,6 @@ router.post("", function (req, res) {
 
   aiModule.getUserHistory(req.body.user, function (error, images, results) {
     if (error) throw res.status(401).json({ error: "History 검색 오류" });
-    if (!results) return res.status(200);
 
     var userHistory = {
       username: results[0].username,
@@ -34,6 +33,8 @@ router.post("", function (req, res) {
     };
     images.forEach((image, index) => {
       var history = {
+        historyid: results[index].historyid,
+        possibility: results[index].diseasepossibility,
         petname: results[index].petname,
         petbreed: results[index].petbreed,
         usertext: results[index].usertext,
@@ -86,7 +87,7 @@ router.post("/upload", upload.single("file"), async function (req, res) {
 
     await new Promise((resolve, reject) => {
       aiModule.createUserHistory(
-        req.body.username,
+        "ahn",
         imageRequest,
         req.body.petname,
         req.body.petbreed,
@@ -100,7 +101,7 @@ router.post("/upload", upload.single("file"), async function (req, res) {
             reject(error);
           } else {
             var totalResults = {
-              username: req.body.username,
+              username: "ahn",
               result: [],
             };
 
@@ -110,6 +111,7 @@ router.post("/upload", upload.single("file"), async function (req, res) {
                 diseaseid: data.disease,
                 possibility: data.possResult,
                 improvement: improvement,
+                petname: req.body.petname,
               };
               totalResults.result.push(result);
             });

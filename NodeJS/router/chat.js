@@ -59,22 +59,22 @@ router.post("", async function (req, res) {
         return res.status(200).json({ answer: rasaResult });
       }
     );
+  } else {
+    chatModule.getDBdata(
+      req.body.type1,
+      req.body.type2,
+      req.body.question,
+      async (error, results) => {
+        if (error) return res.status(401).json({ error: error });
+
+        const answer = [];
+        results.forEach((result) => {
+          answer.push(result.RESULT);
+        });
+        return res.status(200).json({ answer: answer });
+      }
+    );
   }
-
-  chatModule.getDBdata(
-    req.body.type1,
-    req.body.type2,
-    req.body.question,
-    async (error, results) => {
-      if (error) return res.status(401).json({ error: error });
-
-      const answer = [];
-      results.forEach((result) => {
-        answer.push(result.RESULT);
-      });
-      return res.status(200).json({ answer: answer });
-    }
-  );
 });
 
 module.exports = router;

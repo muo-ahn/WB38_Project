@@ -7,13 +7,18 @@ const { request } = require("express");
 
 const rasa = axios.create({
   baseURL: process.env.Rasa_URL,
-  timeout: 10000,
+  timeout: 100000,
 });
 
 class Rasa {
   async rasaRequest(diseaseid, possibility, imporvement, text, callback) {
     try {
-      const data = preprocessData(diseaseid, possibility, imporvement, text);
+      let data;
+      if (diseaseid == 0) {
+        data = text;
+      } else {
+        data = `${diseaseid}, ${possibility}, ${imporvement}, ${text}`;
+      }
 
       const totalResult = [];
       await requestRasa(data).then((responses) => {
@@ -21,8 +26,9 @@ class Rasa {
           console.log(res.text);
           totalResult.push(res.text);
         }
-        callback(null, totalResult);
       });
+
+      callback(null, totalResult);
     } catch (error) {
       callback(error);
     }
@@ -36,20 +42,10 @@ async function requestRasa(text, sender = "default") {
       sender: sender,
     });
 
-    // Rasa 서버의 응답을 반환합니다.
     return response.data;
   } catch (error) {
     console.error(error);
   }
-}
-
-async function preprocessData(diseaseid, possibility, imporvement, text) {
-  if (!diseaseid) diseaseid = "nor";
-  if (!possibility) possibility = 0;
-  if (!imporvement) imporvement = 0;
-  if (!text) text = "";
-
-  return `${diseaseid}, ${possibility}, ${imporvement}, ${text}`;
 }
 
 module.exports = new Rasa();
