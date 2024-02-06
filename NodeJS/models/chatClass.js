@@ -18,9 +18,9 @@ class chatClass {
   }
 
   getDBdata(type1, type2, question, callback) {
-    const queryResult = type2
+    const queryResult = question
       ? this.db.query(
-          "SELECT * FROM CHATBOT WHERE type = ? AND class = ? AND question = ?",
+          "SELECT RESULT FROM CHATBOT WHERE type = ? AND class = ? AND question = ?",
           [type1, type2, question],
           (error, results) => {
             if (error) return callback(error);
@@ -29,8 +29,8 @@ class chatClass {
           }
         )
       : this.db.query(
-          "SELECT * FROM CHATBOT WHERE type = ? AND question = ?",
-          [type1, question],
+          "SELECT QUESTION FROM CHATBOT WHERE type = ? AND class = ?",
+          [type1, type2],
           (error, results) => {
             if (error) return callback(error);
 

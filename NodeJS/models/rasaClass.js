@@ -6,17 +6,17 @@ const axios = require("axios");
 
 const rasa = axios.create({
   baseURL: process.env.Rasa_URL,
-  timeout: 10000,
+  timeout: 5000,
 });
 
 class Rasa {
-  async rasaRequest(diseaseid, possibility, imporvement, text, callback) {
+  async rasaRequest(diseaseid, possibility, improvement, text, callback) {
     try {
       let data;
       if (diseaseid == 0) {
-        data = text;
+        data = `nor, ${improvement}, ${text}`;
       } else {
-        data = `${diseaseid}, ${possibility}, ${imporvement}, ${text}`;
+        data = `${diseaseid}, ${possibility}, ${improvement}, ${text}`;
       }
 
       const totalResult = [];
@@ -41,7 +41,10 @@ async function requestRasa(text, sender = "default") {
       sender: sender,
     });
 
-    return response.data;
+    if (response.data[0].text == "error") throw new Error("rasa error");
+    else {
+      return response.data;
+    }
   } catch (error) {
     console.error(error);
   }

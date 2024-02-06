@@ -32,6 +32,7 @@ const NaverStrategy = require("./passport/naverStrategy.js");
 const authRouter = require("./router/auth.js");
 const aiRouter = require("./router/ai.js");
 const chatRouter = require("./router/chat.js");
+const sectionRouter = require("./router/section.js");
 
 const aiModule = require("./models/aiClass.js");
 const { error } = require("console");
@@ -80,6 +81,7 @@ passportConfig();
 app.use("/auth", authRouter); // 인증 라우터
 app.use("/ai", aiRouter); // 파일 라우터
 app.use("/chat", chatRouter); //채팅 상담 라우터
+app.use("/section", sectionRouter); //채팅 상담 라우터
 
 app.listen(restapi_port, () => {
   console.log(`RestAPI Server Listening on ${restapi_port}`);

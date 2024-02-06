@@ -27,13 +27,11 @@ router.post("/login_process", (req, res, next) => {
         }
 
         req.session.save(() => {
-          return res
-            .status(200)
-            .json({
-              user: user.username,
-              provider: user.provider,
-              email: user.email,
-            });
+          return res.status(200).json({
+            user: user.username,
+            provider: user.provider,
+            email: user.email,
+          });
         });
       });
     }
@@ -116,9 +114,13 @@ router.post("/register_process", function (req, res) {
 });
 
 router.post("/update_password_process", function (req, res) {
-  var username = req.body.username;
+  console.log("update password : ", req.body.user);
+
+  if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
+
+  var username = req.body.user;
   var password = req.body.password;
-  var password2 = req.body.password2;
+  var password2 = req.body.passwordafter;
 
   if (username && password && password2) {
     userModule.updatePassword(
@@ -129,13 +131,9 @@ router.post("/update_password_process", function (req, res) {
       function (error, result) {
         if (error) {
           console.error("Error:", error);
-          res.send(
-            `<script type="text/javascript">alert(${error}); document.location.href="../";</script>`
-          );
+          res.status(401).json({ error: error });
         } else {
-          res.send(
-            `<script type="text/javascript">alert(${result}); document.location.href="../";</script>`
-          );
+          res.status(200).json({ message: result });
         }
       }
     );
@@ -143,10 +141,12 @@ router.post("/update_password_process", function (req, res) {
 });
 
 router.post("/update_email_process", function (req, res) {
+  console.log("update email : ", req.body.user);
+
   if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
 
-  var username = req.body.username;
-  var password = req.body.pwd;
+  var username = req.body.user;
+  var password = req.body.password;
   var email = req.body.email;
 
   if (username && password && email) {
@@ -168,9 +168,11 @@ router.post("/update_email_process", function (req, res) {
 });
 
 router.post("/delete_account_process", function (req, res) {
+  console.log("delete account : ", req.body.user);
+
   if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
 
-  var username = req.body.username;
+  var username = req.body.user;
   var password = req.body.password;
   var password2 = req.body.password2;
 
