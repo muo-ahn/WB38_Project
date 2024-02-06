@@ -3,11 +3,10 @@
 require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
 
 const axios = require("axios");
-const { request } = require("express");
 
 const rasa = axios.create({
   baseURL: process.env.Rasa_URL,
-  timeout: 100000,
+  timeout: 10000,
 });
 
 class Rasa {

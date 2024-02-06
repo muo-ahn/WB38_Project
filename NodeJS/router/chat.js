@@ -7,22 +7,18 @@ var router = express.Router();
 const chatModule = require("../models/chatClass.js");
 const rasaModule = require("../models//rasaClass.js");
 
-const { Configuration, OpenAIApi } = require("openai");
+const { OpenAI } = require("openai");
 
 const callGpt35 = async (prompt) => {
-  const configiration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-    organization: process.env.OPENAI_ORGANIZATION,
-  });
   try {
-    const openai = new OpenAIApi(configiration);
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    const response = await openai.createChatCompletion({
+    const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: prompt }],
     });
 
-    return response.data.choices[0].message;
+    return response.choices[0].message.content;
   } catch (error) {
     console.error("gpt35 error :", error);
   }
