@@ -19,17 +19,11 @@ class Rasa {
         data = `${text.diseaseid}, ${text.improvement}, ${text.possibility}`;
       }
 
-      const totalResult = [];
       await requestRasa(data).then((responses) => {
-        for (const res of responses) {
-          console.log(res.text);
-          totalResult.push(res.text);
-        }
+        return callback(null, responses[0].text);
       });
-
-      callback(null, totalResult);
     } catch (error) {
-      callback(error);
+      return callback(error);
     }
   }
 }

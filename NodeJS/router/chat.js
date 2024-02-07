@@ -4,11 +4,9 @@ require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
 
 var express = require("express");
 var router = express.Router();
-const chatModule = require("../models/sectionClass.js");
 const rasaModule = require("../models//rasaClass.js");
 
 const { OpenAI } = require("openai");
-
 const callGpt35 = async (prompt) => {
   try {
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -55,7 +53,8 @@ router.post("", async function (req, res) {
     await rasaModule.rasaRequest(data, async (error, rasaResult) => {
       if (error) return res.status(401).json({ error: error });
 
-      return res.status(200).json({ answer: rasaResult });
+      const parsedText = rasaResult.split("\n");
+      return res.status(200).json({ answer: parsedText });
     });
   }
 });
