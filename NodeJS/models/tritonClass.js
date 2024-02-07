@@ -114,7 +114,7 @@ function parseResult(postData) {
   postData.forEach((data) => {
     const modelPart = data.modelName.split("\x07");
 
-    if (data.possResult >= 40) {
+    if (data.possResult >= 70) {
       const indexOffset =
         data.modelType === "multi" ? data.modelIndex : modelPart[1] - 1;
 

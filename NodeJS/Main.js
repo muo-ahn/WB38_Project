@@ -100,13 +100,12 @@ socketServer.on("connection", (socket) => {
         data.petbreed.type,
         data.api.type,
         data.usertext,
-        (error, results, historyids) => {
+        (error, results) => {
           if (error)
             return socket.emit("text", { error: error, status: "error" });
 
           return socket.emit("text", {
-            result: results,
-            historyid: historyids,
+            result: results[0],
             status: "ok",
           });
         }

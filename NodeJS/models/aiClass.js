@@ -49,57 +49,66 @@ class AI {
   ) {
     const queryAsync = this.queryAsync;
 
-    // async
     const insertImages = async () => {
       const parseResults = [];
 
-      for (const image of images) {
+      const promises = images.map(async (image) => {
         const imageData = await fs.readFile(image);
 
-        await tritonModule.TritonRequest(
-          imageData,
-          petbreed,
-          api,
-          async function (error, responses) {
-            if (error) return callback(error);
+        return new Promise((resolve, reject) => {
+          tritonModule.TritonRequest(
+            imageData,
+            petbreed,
+            api,
+            async (error, responses) => {
+              if (error) reject(error);
 
-            await tritonModule.postprocessResponses(
-              responses,
-              async function (error, parseResult) {
-                if (error) return callback(error);
+              tritonModule.postprocessResponses(
+                responses,
+                async (error, parseResult) => {
+                  if (error) reject(error);
 
-                for (const result of parseResult) {
-                  const historyid = await insertuserHistory(
-                    username,
-                    imageData,
-                    petname,
-                    petbreed,
-                    usertext,
-                    result.disease,
-                    result.possResult,
-                    queryAsync
-                  );
+                  for (const result of parseResult) {
+                    const historyid = await insertuserHistory(
+                      username,
+                      imageData,
+                      petname,
+                      petbreed,
+                      usertext,
+                      result.disease,
+                      result.possResult,
+                      queryAsync
+                    );
 
-                  //호전성 검사
-                  const improvement = await checkImprovement(
-                    queryAsync,
-                    username,
-                    petname,
-                    result.disease
-                  );
+                    const improvement = await checkImprovement(
+                      queryAsync,
+                      username,
+                      petname,
+                      result.disease
+                    );
 
-                  parseResults.push({
-                    parseResult: result,
-                    historyid: historyid,
-                    improvement: improvement,
-                  });
+                    parseResults.push({
+                      diseaseid: result.disease,
+                      possibility: result.possResult,
+                      historyid: historyid,
+                      improvement: improvement,
+                    });
+                  }
+
+                  resolve(); // Resolve the promise after processing this image
                 }
-              }
-            );
-          }.bind(this)
-        );
+              );
+            }
+          );
+        });
+      });
+
+      try {
+        await Promise.all(promises);
+        callback(null, parseResults);
+      } catch (error) {
+        callback(error);
       }
-      return callback(null, parseResults);
     };
 
     insertImages();
@@ -116,12 +125,12 @@ class AI {
     callback
   ) {
     const queryAsync = this.queryAsync;
+    const parseResults = [];
 
     // async
     const insertImages = async () => {
       try {
         const imageData = images;
-        var historyids = [];
 
         await tritonModule.TritonRequest(
           imageData,
@@ -135,9 +144,6 @@ class AI {
               async function (error, parseResult) {
                 if (error) return callback(error);
 
-                const rasaTotalResults = [];
-                let imporvement = 0;
-
                 for (const result of parseResult) {
                   const historyid = await insertuserHistory(
                     username,
@@ -149,25 +155,25 @@ class AI {
                     result.possResult,
                     queryAsync
                   );
-
-                  historyids.push(historyid);
+                  console.log(historyid);
 
                   //호전성 검사
-                  const temp = await checkImprovement(
+                  const improvement = await checkImprovement(
                     queryAsync,
                     username,
                     petname,
                     result.disease
                   );
-                  imporvement = temp;
+
+                  parseResults.push({
+                    diseaseid: result.disease,
+                    possibility: result.possResult,
+                    historyid: historyid,
+                    improvement: improvement,
+                  });
                 }
 
-                return callback(
-                  null,
-                  rasaTotalResults,
-                  imporvement,
-                  historyids
-                );
+                return callback(null, parseResults);
               }
             );
           }.bind(this)

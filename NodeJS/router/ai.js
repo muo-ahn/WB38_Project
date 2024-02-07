@@ -109,9 +109,8 @@ router.post("/upload", upload.single("file"), async function (req, res) {
 
             parseResult.forEach((data) => {
               let result = {
-                historyID: data.historyid,
-                diseaseid: data.parseResult.disease,
-                possibility: data.parseResult.possResult,
+                diseaseid: data.diseaseid,
+                possibility: data.possibility,
                 improvement: data.improvement,
                 petname: req.body.petname,
               };
