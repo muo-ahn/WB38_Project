@@ -5,7 +5,9 @@ var express = require("express");
 var router = express.Router();
 var multer = require("multer");
 
+const path = require("path");
 const aiModule = require("../models/aiClass.js");
+const fastAPI = require("../models/fastAPI.js");
 
 var storage = multer.diskStorage({
   destination: function (req, file, callback) {
@@ -60,7 +62,7 @@ router.post("/upload", upload.single("file"), async function (req, res) {
       imageRequest.push(req.file.path);
     } else if (req.file.mimetype.startsWith("video/")) {
       //프레임 추출 요청
-      const videoFileName = req.files[0].originalname;
+      const videoFileName = req.file.originalname;
       const videoFilePath = path.join(
         __dirname,
         "..",
@@ -93,7 +95,7 @@ router.post("/upload", upload.single("file"), async function (req, res) {
         req.body.petbreed,
         req.body.api,
         req.body.usertext,
-        function (error, parseResult, improvement, historyIDs) {
+        function (error, parseResult) {
           if (error) {
             console.error("Error:", error);
 
@@ -105,12 +107,12 @@ router.post("/upload", upload.single("file"), async function (req, res) {
               result: [],
             };
 
-            parseResult.forEach((data, index) => {
+            parseResult.forEach((data) => {
               let result = {
-                historyID: historyIDs[index],
-                diseaseid: data.disease,
-                possibility: data.possResult,
-                improvement: improvement,
+                historyID: data.historyid,
+                diseaseid: data.parseResult.disease,
+                possibility: data.parseResult.possResult,
+                improvement: data.improvement,
                 petname: req.body.petname,
               };
               totalResults.result.push(result);
@@ -138,6 +140,25 @@ router.post("/delete", async function (req, res) {
 
     return res.status(200).json({ message: "히스토리 삭제 성공" });
   });
+});
+
+router.post("/check", function (req, res) {
+  if (!req.body.user) return res.status(401).json({ error: "잘못된 접근" });
+
+  const username = req.body.user;
+  const petname = req.body.petname;
+  const diseaseid = req.body.diseaseid;
+
+  aiModule.getImprovement(
+    username,
+    petname,
+    diseaseid,
+    (error, improvement) => {
+      if (error) return res.status(401).json({ error: error });
+
+      return res.status(200).json({ message: improvement });
+    }
+  );
 });
 
 module.exports = router;

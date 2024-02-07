@@ -4,7 +4,7 @@ require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
 
 var express = require("express");
 var router = express.Router();
-const chatModule = require("../models/chatClass.js");
+const chatModule = require("../models/sectionClass.js");
 const rasaModule = require("../models//rasaClass.js");
 
 const { OpenAI } = require("openai");
@@ -25,38 +25,38 @@ const callGpt35 = async (prompt) => {
 };
 
 router.post("", async function (req, res) {
+  console.log("chat request");
   if (!req.body) res.status(401).json({ error: "잘못된 접근" });
 
   if (req.body.text) {
-    let diseaseid, possibility, improvement;
-    req.body.diseaseid ? (diseaseid = req.body.diseaseid) : (diseaseid = 0);
-    req.body.possibility
-      ? (possibility = req.body.possibility)
-      : (possibility = 0);
-    req.body.improvement
-      ? (improvement = req.body.improvement)
-      : (improvement = 0);
+    const data = {
+      text: req.body.text,
+    };
 
-    await rasaModule.rasaRequest(
-      diseaseid,
-      possibility,
-      improvement,
-      req.body.text,
-      async (error, rasaResult) => {
-        if (error) {
-          const response = await callGpt35(req.body.text);
-          if (response) {
-            return res.status(200).json({ answer: response });
-          } else {
-            return res.status(401).json({ error: "gpt error" });
-          }
+    await rasaModule.rasaRequest(data, async (error, rasaResult) => {
+      if (error) {
+        const response = await callGpt35(req.body.text);
+        if (response) {
+          return res.status(200).json({ answer: response });
+        } else {
+          return res.status(401).json({ error: "gpt error" });
         }
-
-        return res.status(200).json({ answer: rasaResult });
       }
-    );
+
+      return res.status(200).json({ answer: rasaResult });
+    });
   } else {
-    return res.status(401).json({ error: "text is null" });
+    const data = {
+      diseaseid: req.body.diseaseid,
+      possibility: req.body.possibility,
+      improvement: req.body.improvement,
+    };
+
+    await rasaModule.rasaRequest(data, async (error, rasaResult) => {
+      if (error) return res.status(401).json({ error: error });
+
+      return res.status(200).json({ answer: rasaResult });
+    });
   }
 });
 

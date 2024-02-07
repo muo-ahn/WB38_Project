@@ -17,7 +17,7 @@ class chatClass {
     this.queryAsync = util.promisify(this.db.query).bind(this.db);
   }
 
-  getDBdata(type1, type2, question, callback) {
+  async getDBdata(type1, type2, question, callback) {
     const queryResult = question
       ? this.db.query(
           "SELECT RESULT FROM CHATBOT WHERE type = ? AND class = ? AND question = ?",

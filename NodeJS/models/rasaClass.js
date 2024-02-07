@@ -10,13 +10,13 @@ const rasa = axios.create({
 });
 
 class Rasa {
-  async rasaRequest(diseaseid, possibility, improvement, text, callback) {
+  async rasaRequest(text, callback) {
     try {
       let data;
-      if (diseaseid == 0) {
-        data = `nor, ${improvement}, ${text}`;
+      if (text.text) {
+        data = text.text;
       } else {
-        data = `${diseaseid}, ${possibility}, ${improvement}, ${text}`;
+        data = `${text.diseaseid}, ${text.improvement}, ${text.possibility}`;
       }
 
       const totalResult = [];
@@ -41,10 +41,7 @@ async function requestRasa(text, sender = "default") {
       sender: sender,
     });
 
-    if (response.data[0].text == "error") throw new Error("rasa error");
-    else {
-      return response.data;
-    }
+    return response.data;
   } catch (error) {
     console.error(error);
   }

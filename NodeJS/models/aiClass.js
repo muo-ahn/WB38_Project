@@ -51,58 +51,55 @@ class AI {
 
     // async
     const insertImages = async () => {
+      const parseResults = [];
+
       for (const image of images) {
-        try {
-          const imageData = await fs.readFile(image);
-          var historyids = [];
+        const imageData = await fs.readFile(image);
 
-          await tritonModule.TritonRequest(
-            imageData,
-            petbreed,
-            api,
-            async function (error, responses) {
-              if (error) return callback(error);
+        await tritonModule.TritonRequest(
+          imageData,
+          petbreed,
+          api,
+          async function (error, responses) {
+            if (error) return callback(error);
 
-              await tritonModule.postprocessResponses(
-                responses,
-                async function (error, parseResult) {
-                  if (error) return callback(error);
+            await tritonModule.postprocessResponses(
+              responses,
+              async function (error, parseResult) {
+                if (error) return callback(error);
 
-                  let imporvement = 0;
+                for (const result of parseResult) {
+                  const historyid = await insertuserHistory(
+                    username,
+                    imageData,
+                    petname,
+                    petbreed,
+                    usertext,
+                    result.disease,
+                    result.possResult,
+                    queryAsync
+                  );
 
-                  for (const result of parseResult) {
-                    const historyid = await insertuserHistory(
-                      username,
-                      imageData,
-                      petname,
-                      petbreed,
-                      usertext,
-                      result.disease,
-                      result.possResult,
-                      queryAsync
-                    );
+                  //호전성 검사
+                  const improvement = await checkImprovement(
+                    queryAsync,
+                    username,
+                    petname,
+                    result.disease
+                  );
 
-                    historyids.push(historyid);
-
-                    //호전성 검사
-                    const temp = await checkImprovement(
-                      queryAsync,
-                      username,
-                      petname,
-                      result.disease
-                    );
-                    imporvement = temp;
-                  }
-
-                  return callback(null, parseResult, imporvement, historyids);
+                  parseResults.push({
+                    parseResult: result,
+                    historyid: historyid,
+                    improvement: improvement,
+                  });
                 }
-              );
-            }.bind(this)
-          );
-        } catch (error) {
-          return callback(error);
-        }
+              }
+            );
+          }.bind(this)
+        );
       }
+      return callback(null, parseResults);
     };
 
     insertImages();
@@ -193,6 +190,21 @@ class AI {
         return callback(null, results);
       }
     );
+  }
+
+  getImprovement(username, petname, diseaseid, callback) {
+    const queryAsync = this.queryAsync;
+
+    const improvement = checkImprovement(
+      queryAsync,
+      username,
+      petname,
+      diseaseid
+    );
+
+    if (!improvement) return callback("improvement error");
+
+    return callback(null, improvement);
   }
 }
 
