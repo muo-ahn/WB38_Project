@@ -9,6 +9,7 @@ const tritonModule = require("./tritonClass.js");
 const rasaModule = require("./rasaClass.js");
 const { parse } = require("path");
 const { error } = require("console");
+const { find } = require("./userClass.js");
 
 class AI {
   constructor() {
@@ -68,24 +69,28 @@ class AI {
                 async (error, parseResult) => {
                   if (error) reject(error);
 
+                  var historyid;
+                  var improvement = 0;
                   for (const result of parseResult) {
-                    const historyid = await insertuserHistory(
-                      username,
-                      imageData,
-                      petname,
-                      petbreed,
-                      usertext,
-                      result.disease,
-                      result.possResult,
-                      queryAsync
-                    );
+                    if (result.disease) {
+                      historyid = await insertuserHistory(
+                        username,
+                        imageData,
+                        petname,
+                        petbreed,
+                        usertext,
+                        result.disease,
+                        result.possResult,
+                        queryAsync
+                      );
 
-                    const improvement = await checkImprovement(
-                      queryAsync,
-                      username,
-                      petname,
-                      result.disease
-                    );
+                      improvement = await checkImprovement(
+                        queryAsync,
+                        username,
+                        petname,
+                        result.disease
+                      );
+                    }
 
                     parseResults.push({
                       diseaseid: result.disease,
@@ -127,6 +132,7 @@ class AI {
     const queryAsync = this.queryAsync;
     const parseResults = [];
 
+    console.log("live webcam processing");
     // async
     const insertImages = async () => {
       try {
@@ -144,26 +150,33 @@ class AI {
               async function (error, parseResult) {
                 if (error) return callback(error);
 
+                var historyid;
+                var improvement = 0;
                 for (const result of parseResult) {
-                  const historyid = await insertuserHistory(
-                    username,
-                    imageData,
-                    petname,
-                    petbreed,
-                    usertext,
-                    result.disease,
-                    result.possResult,
-                    queryAsync
-                  );
-                  console.log(historyid);
+                  if (result.disease || result.disease != "nor") {
+                    if (result.disease == "nor") {
+                      console.log("disease 정상");
+                      return callback(null, parseResults);
+                    } else {
+                      historyid = await insertuserHistory(
+                        username,
+                        imageData,
+                        petname,
+                        petbreed,
+                        usertext,
+                        result.disease,
+                        result.possResult,
+                        queryAsync
+                      );
 
-                  //호전성 검사
-                  const improvement = await checkImprovement(
-                    queryAsync,
-                    username,
-                    petname,
-                    result.disease
-                  );
+                      improvement = await checkImprovement(
+                        queryAsync,
+                        username,
+                        petname,
+                        result.disease
+                      );
+                    }
+                  }
 
                   parseResults.push({
                     diseaseid: result.disease,
@@ -198,14 +211,15 @@ class AI {
     );
   }
 
-  getImprovement(username, petname, diseaseid, callback) {
+  async getImprovement(username, petname, diseaseid, historyid, callback) {
     const queryAsync = this.queryAsync;
 
-    const improvement = checkImprovement(
+    const improvement = await checkImprovement(
       queryAsync,
       username,
       petname,
-      diseaseid
+      diseaseid,
+      historyid
     );
 
     if (!improvement) return callback("improvement error");
@@ -251,27 +265,50 @@ async function insertuserHistory(
 // index, 3 : 증상 지속, default
 // index, 1 ~ 2 : 증상 악화
 // index, 4 ~ 5 : 증상 완화
-async function checkImprovement(queryAsync, username, petname, diseaseid) {
+async function checkImprovement(
+  queryAsync,
+  username,
+  petname,
+  diseaseid,
+  historyid
+) {
   try {
     const results = await queryAsync(
       "SELECT * FROM userHistory where username = ? AND petname = ? AND diseaseid = ?",
       [username, petname, diseaseid]
     );
 
-    let currentIndex = 3;
+    if (results.length == 1 || results.length == 0) {
+      return 0;
+    } else {
+      let currentIndex = 3;
+      if (!historyid) {
+        //request 요청
+        const temp = results[results.length - 1].diseasepossibility; //지금 들어온 거
+        const temp2 = results[results.length - 2].diseasepossibility; //가장 최근 거
 
-    for (let innerIndex = 0; innerIndex < results.length - 1; innerIndex++) {
-      const temp = results[innerIndex].diseasepossibility;
-      if (results[innerIndex + 1]?.diseasepossibility - temp >= 5) {
-        currentIndex++;
-      } else if (results[innerIndex + 1]?.diseasepossibility - temp >= 10) {
-        currentIndex = currentIndex + 2;
-      } else if (results[innerIndex + 1]?.diseasepossibility - temp === 0) {
-        currentIndex = 3;
-      } else if (results[innerIndex + 1]?.diseasepossibility - temp <= -5) {
-        currentIndex--;
+        if (temp - temp2 >= 10) currentIndex--;
+        else if (temp - temp2 >= 5) currentIndex = currentIndex - 2;
+        else if (temp - temp2 <= -5) currentIndex++;
+        else if (temp - temp2 >= 10) currentIndex = currentIndex + 2;
+        else currentIndex = 3;
       } else {
-        currentIndex = innerIndex - 2;
+        //history 요청
+        var temp;
+        results.forEach((result) => {
+          if (result.historyid == historyid) temp = result.diseasepossibility;
+        });
+        if (results[results.length - 1].diseasepossibility) {
+          const temp2 = results[results.length - 1].diseasepossibility; //가장 최근 거
+
+          if (temp - temp2 >= 10) currentIndex--;
+          else if (temp - temp2 >= 5) currentIndex = currentIndex - 2;
+          else if (temp - temp2 <= -5) currentIndex++;
+          else if (temp - temp2 >= 10) currentIndex = currentIndex + 2;
+          else currentIndex = 3;
+        } else {
+          currentIndex = 3;
+        }
       }
 
       if (currentIndex <= 0) {
@@ -279,9 +316,10 @@ async function checkImprovement(queryAsync, username, petname, diseaseid) {
       } else if (currentIndex >= 5) {
         currentIndex = 5;
       }
-    }
 
-    return currentIndex;
+      console.log("호전성 : " + currentIndex);
+      return currentIndex;
+    }
   } catch (error) {
     throw error;
   }

@@ -6,7 +6,7 @@ const userModule = require("../models/userClass.js");
 const passport = require("passport");
 
 router.post("/login_process", (req, res, next) => {
-  console.log(`로그인 시도 : ${req.body.username} ${req.body.password}`);
+  console.log(`로그인 요청 : ${req.body.username} ${req.body.password}`);
 
   passport.authenticate(
     "local",
@@ -63,6 +63,7 @@ router.post(
 
 router.post("/logout_process", function (req, res) {
   if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
+  console.log("로그아웃 요청 : " + req.body.user);
 
   userModule.find(req.body.user, req.body.provider, (error, results) => {
     if (error) return res.status(401).json({ error: "잘못된 접근" });
@@ -85,6 +86,7 @@ router.post("/register_process", function (req, res) {
   var password = req.body.password;
   var password2 = req.body.password2;
   var email = req.body.email;
+  console.log("회원가입 요청");
 
   if (username && password && password2) {
     if (password === password2) {
@@ -114,7 +116,7 @@ router.post("/register_process", function (req, res) {
 });
 
 router.post("/update_password_process", function (req, res) {
-  console.log("update password : ", req.body.user);
+  console.log("비밀번호 변경 요청 : ", req.body.user);
 
   if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
 
@@ -133,6 +135,8 @@ router.post("/update_password_process", function (req, res) {
           console.error("Error:", error);
           res.status(401).json({ error: error });
         } else {
+          console.log("비밀번호 변경 성공 : " + req.body.user);
+
           res.status(200).json({ message: result });
         }
       }
@@ -141,7 +145,7 @@ router.post("/update_password_process", function (req, res) {
 });
 
 router.post("/update_email_process", function (req, res) {
-  console.log("update email : ", req.body.user);
+  console.log("이메일 변경 요청 : " + req.body.user);
 
   if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
 
@@ -160,6 +164,7 @@ router.post("/update_email_process", function (req, res) {
           console.error("Error:", error);
           return res.status(401).json({ error: error });
         } else {
+          console.log("이메일 변경 성공 : " + req.body.user);
           return res.status(200).json({ message: result });
         }
       }
@@ -168,7 +173,7 @@ router.post("/update_email_process", function (req, res) {
 });
 
 router.post("/delete_account_process", function (req, res) {
-  console.log("delete account : ", req.body.user);
+  console.log("회원 탈퇴 요청 : " + req.body.user);
 
   if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
 
@@ -190,6 +195,7 @@ router.post("/delete_account_process", function (req, res) {
             req.logout(() => {
               req.session.destroy();
 
+              console.log("회원 탈퇴 성공 : " + req.body.user);
               return res.status(200).json({ message: result });
             });
           }

@@ -1,0 +1,148 @@
+version: "3.1"
+
+intents:
+  - request_disease
+
+  - request_disease_cause
+  - request_disease_treatment
+  - request_disease_prevention
+  - request_disease_caution
+  - request_disease_worse
+  - request_disease_allergy
+  - request_disease_infection
+  - request_disease_homeCare
+  - request_disease_management
+
+  - request_ointment_recommendation
+  - request_end
+
+
+entities:
+  - disease_code
+  - disease_probability
+  - disease_improvement
+  # - disease_name_keyword
+
+  # # 실시간 초기화 
+  # - disease_name
+  # # 실시간 초기화 
+  # - disease_info_keyword_cause
+  # # 실시간 초기화 
+  # - disease_info_keyword_treatment
+  # # 실시간 초기화 
+  # - disease_info_keyword_management
+
+actions:
+  # 의도치 않는 intent 처리 
+  - action_default_fallback
+  # 상담 종료 응답
+  - action_end_conversation
+  # 검사 결과 
+  - action_disease_Inspection_Result
+
+  # 질병 질의 응답
+  - action_utter_request_disease
+
+  # # 질병 원인 응답
+  # - action_utter_request_disease_cause
+  # # 질병 치료 응답
+  # - action_utter_request_disease_treatment
+  # # 질병 추후 관리 응답
+  # - action_utter_request_disease_management
+
+
+slots:
+  # 사용자 입력 문자열 
+  user_message:
+    type: text
+    mappings:
+    - type: from_text
+
+  # 질병 코드
+  disease_code:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: disease_code
+
+  # 질병 확률
+  disease_probability:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: disease_probability
+
+  # 질병 호전성 
+  disease_improvement:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: disease_improvement
+
+  # # 질병 이름
+  # disease_name_keyword:
+  #   type: text
+  #   mappings:
+  #   - type: from_entity
+  #     entity: disease_name_keyword
+
+  # # 질병 이름
+  # disease_name:
+  #   type: text
+  #   mappings:
+  #   - type: from_entity
+  #     entity: disease_name
+  
+  # # 질병 원인 키워드 
+  # disease_info_keyword_cause:
+  #   type: text
+  #   mappings:
+  #   - type: from_entity
+  #     entity: disease_info_keyword_cause
+
+  # # 질병 치료 키워드 
+  # disease_info_keyword_treatment:
+  #   type: text
+  #   mappings:
+  #   - type: from_entity
+  #     entity: disease_info_keyword_treatment
+  
+  # # 질병 관리 키워드 
+  # disease_info_keyword_management:
+  #   type: text
+  #   mappings:
+  #   - type: from_entity
+  #     entity: disease_info_keyword_management
+
+
+responses:
+  # 인삿말 
+  utter_greet:
+  - text: "안녕하세요 ai 상담사 자비스 입니다."
+
+  #상담 종료 인삿말
+  utter_end:
+  - text: "상담을 종료합니다."
+
+  # 질병 검사 결과 대답 
+  utter_disease_inspection_Results:
+  - text: "방구석 수의사 AI 피부 검사 결과, 00%로 확률로 농포,여드름이 확인되었습니다."
+
+  #질병 원인 대답 
+  utter_disease_cause:
+  - text: "농포와 여드름은 피부의 기름 분비 과다, 피부에 먼지나 오염물질이 쌓이는 것, 호르몬 변화, 스트레스 등 다양한 원인에 의해 발생할 수 있어요. 
+특히, 피부가 지속적으로 습하거나 더러운 상태에서는 이러한 피부 질환이 더욱 쉽게 발생할 수 있어요."
+  
+  #질병 관리 대답 
+  utter_disease_management:
+  - text: "추후 관리는 피부 연고를 사용하여 상처 질환부위를 치료하고  건강한 식사와 충분한 수분 섭취로 
+  피부 건강을 유지하는 것이 중요합니다. 또한, 피부 상태를 정기적으로 확인하고, 스트레스를 줄이는 것도 중요합니다."
+  
+  #연고 추천 
+  utter_ointment_recommendation:
+  - text: " 반려견 피부 연고는 인터넷에 판매 되고있지만 개인적인 의견으로는, 피부 연고는 질환 상태에 따라서 반려견에 필요한 약을 받아야 합니다. 그러기 위해선 동물병원에 내원하는 것을 권장드립니다."
+  
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

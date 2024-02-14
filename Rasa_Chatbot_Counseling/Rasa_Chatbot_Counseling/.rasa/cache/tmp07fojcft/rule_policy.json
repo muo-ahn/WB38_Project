@@ -1,0 +1,18 @@
+{
+  "lookup": {
+    "rules": {
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"request_end\"}}]": "action_end_conversation",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"request_end\"}}, {\"prev_action\": {\"action_name\": \"action_end_conversation\"}, \"user\": {\"intent\": \"request_end\"}}]": "action_listen"
+    },
+    "rule_only_slots": [],
+    "rule_only_loops": [],
+    "rules_for_loop_unhappy_path": {},
+    "rules_not_in_stories": [
+      "predicting default action with intent restart",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"request_end\"}}]",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"request_end\"}}, {\"prev_action\": {\"action_name\": \"action_end_conversation\"}, \"user\": {\"intent\": \"request_end\"}}]",
+      "predicting default action with intent session_start",
+      "predicting default action with intent back"
+    ]
+  }
+}

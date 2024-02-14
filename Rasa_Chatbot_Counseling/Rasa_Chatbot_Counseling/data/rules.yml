@@ -1,0 +1,10 @@
+version: "3.1"
+
+rules:
+
+- rule: goodBye
+  steps:
+  - intent: request_end
+  - action: action_end_conversation
+
+

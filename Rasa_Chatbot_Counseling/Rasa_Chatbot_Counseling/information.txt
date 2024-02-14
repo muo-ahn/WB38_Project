@@ -1,0 +1,28 @@
+entities:
+- disease_code
+
+slots:
+  disease_code:
+    type: text
+    mappings:
+    - type: from_entity
+      entity: disease_code
+
+ [mu07](disease_code)
+
+1. 먼저 해당 질병에 대한 질의 키워드를 추출한다. 
+"원인", "치료","관리" 등등... 
+만약 질병 이름을 말을 안하고 "원인", "치료", "관리" 에 대해서 질문한다면? 
+-기존 질병 코드를 가져와서 얘기 한다. 
+
+# rasa 액션 서버 
+rasa run actions --port 4400
+
+# rasa 서버
+rasa run -p 5005
+
+
+Disease_info.yml 파일 수정
+ActionDiseaseInspectionResult 함수 수정(거기에 질병에 대한 기본 설명 추가)
+nlu.yml 파일 수정 
+action.py 수정

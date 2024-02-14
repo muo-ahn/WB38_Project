@@ -5,7 +5,7 @@ require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
 const axios = require("axios");
 
 const rasa = axios.create({
-  baseURL: process.env.Rasa_URL,
+  baseURL: "http://localhost:5005",
   timeout: 5000,
 });
 

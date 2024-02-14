@@ -23,16 +23,21 @@ var upload = multer({
 });
 
 router.post("", function (req, res) {
-  console.log("userHistory request");
   if (!req.body.user) res.status(401).json({ error: "잘못된 접근" });
+  console.log("히스토리 요청 : " + req.body.user);
 
   aiModule.getUserHistory(req.body.user, function (error, images, results) {
-    if (error) throw res.status(401).json({ error: "History 검색 오류" });
+    if (error) return res.status(401).json({ error: "History 검색 오류" });
+    if (results.length == 0)
+      return res.status(200).json({ message: "no data" });
 
     var userHistory = {
       username: results[0].username,
       history: [],
     };
+
+    //호전성 검사
+
     images.forEach((image, index) => {
       var history = {
         historyid: results[index].historyid,
@@ -53,7 +58,7 @@ router.post("", function (req, res) {
 
 router.post("/upload", upload.single("file"), async function (req, res) {
   if (!req.body.username) res.status(401).json({ error: "잘못된 접근" });
-  console.log("Request : ", req.body.username);
+  console.log("file upload Request : " + req.body.username);
 
   try {
     const imageRequest = [];
@@ -76,6 +81,7 @@ router.post("/upload", upload.single("file"), async function (req, res) {
           if (error) {
             return res.status(401).json({ error: "프레임 추출 실패" });
           }
+          console.log("프레임 추출 성공");
           frames.forEach((extractedImage) => {
             imageRequest.push(extractedImage);
           });
@@ -117,6 +123,9 @@ router.post("/upload", upload.single("file"), async function (req, res) {
               totalResults.result.push(result);
             });
 
+            console.log(
+              req.body.username + "의 요청의 결과 : " + parseResult[0].diseaseid
+            );
             res.status(200).json(totalResults);
             resolve();
           }
@@ -130,6 +139,7 @@ router.post("/upload", upload.single("file"), async function (req, res) {
 
 router.post("/delete", async function (req, res) {
   if (!req.body.user) return res.status(401).json({ error: "잘못된 접근" });
+  console.log("히스토리 삭제 요청 : " + req.body.user);
 
   const username = req.body.user;
   const historyid = req.body.historyid;
@@ -143,15 +153,18 @@ router.post("/delete", async function (req, res) {
 
 router.post("/check", function (req, res) {
   if (!req.body.user) return res.status(401).json({ error: "잘못된 접근" });
+  console.log("호전성 검사 요청 : " + req.body.user);
 
   const username = req.body.user;
   const petname = req.body.petname;
   const diseaseid = req.body.diseaseid;
+  const historyid = req.body.historyId;
 
   aiModule.getImprovement(
     username,
     petname,
     diseaseid,
+    historyid,
     (error, improvement) => {
       if (error) return res.status(401).json({ error: error });
 

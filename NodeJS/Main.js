@@ -2,6 +2,7 @@
 
 require("dotenv").config({ path: "C:/Project/WB38_Project/NodeJS/.env" });
 
+const fs = require("fs");
 const http = require("http");
 const io = require("socket.io");
 const express = require("express");
@@ -63,16 +64,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use((req, res, next) => {
-//   const clientIP = req.ip;
-//   console.log(`Client IP Address: ${clientIP}`);
-//   if (clientIP == "::ffff:10.101.70.130") {
-//     next();
-//   } else {
-//     res.status(403).send("Forbidden Access");
-//   }
-// });
-
 LocalStrategy();
 KakaoStrategy();
 NaverStrategy();
@@ -93,23 +84,26 @@ socketServer.on("connection", (socket) => {
 
   socket.on("image", async (data) => {
     try {
-      aiModule.createUserHistoryLive(
-        data.user,
-        data.image,
-        data.petname,
-        data.petbreed.type,
-        data.api.type,
-        data.usertext,
-        (error, results) => {
-          if (error)
-            return socket.emit("text", { error: error, status: "error" });
+      if (data.image) {
+        aiModule.createUserHistoryLive(
+          data.user,
+          data.image,
+          data.petname,
+          data.petbreed.type,
+          data.api.type,
+          data.usertext,
+          (error, results) => {
+            if (error)
+              return socket.emit("text", { error: error, status: "error" });
 
-          return socket.emit("text", {
-            result: results[0],
-            status: "ok",
-          });
-        }
-      );
+            console.log("socket 통신 결과 전송");
+            return socket.emit("text", {
+              result: results[0],
+              status: "ok",
+            });
+          }
+        );
+      }
     } catch (error) {
       console.log(error);
       return socket.emit("text", { error: error, status: "error" });

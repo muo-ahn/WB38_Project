@@ -1,0 +1,28 @@
+[
+  {
+    "tag_name": "entity",
+    "ids_to_tags": {
+      "1": "B-disease_code",
+      "2": "I-disease_code",
+      "3": "L-disease_code",
+      "4": "U-disease_code",
+      "5": "B-disease_probability",
+      "6": "I-disease_probability",
+      "7": "L-disease_probability",
+      "8": "U-disease_probability",
+      "0": "O"
+    },
+    "tags_to_ids": {
+      "B-disease_code": 1,
+      "I-disease_code": 2,
+      "L-disease_code": 3,
+      "U-disease_code": 4,
+      "B-disease_probability": 5,
+      "I-disease_probability": 6,
+      "L-disease_probability": 7,
+      "U-disease_probability": 8,
+      "O": 0
+    },
+    "num_tags": 9
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "lookup": {
+    "eJyLrq6NBQAEOAGx": "action_listen",
+    "eJwtysEJgDAMRuFVMoATdBWREOp/CGjUJnop3d2A3t6Db+5jon42PCw19LBC/Qs22VHon009YGlvR0ujlhuFGq4bHryqQxxcJcEYywvZyyIk": "utter_disease_cause",
+    "eJyLrq7VUaguKEoti09MLsnMz7NSqIYw4vMSc1OtFKCcnMziktQ8oNrS4tQioJrMPCC3xEqhKLWwNLW4JD4lszg1sTg1PjkRqKCWgJmlJSWpRWhaiDU5FgD0OkUM": "action_listen",
+    "eJytjkEKgDAQA7/SB/iCfkWkLBqkYFftbr2U/t0FPXkRwVtCJiF9bZ2rW8YRaNS4snf1EoEpwbvbLFEUbGwRZGMim1XvMvYC0TBFAQnCSAa0l82iivyo/LP88W0iphnJstaGE+XyZ4s=": "utter_disease_management",
+    "eJyLrq7VUaguKEoti09MLsnMz7NSqIYw4vMSc1OtFKCcnMziktQ8oNrS4tQioJrMPCC3xEqhKLWwNLW4JD4lszg1sTg1PjkRqKCWgJmlJSWpRWhaqGMyia7NTcxLTE/NBcqR5mQkfSTZEQsA6pqOiw==": "action_listen",
+    "eJytTksKAjEMvUoP4Al6FZEQOg8p2FaT1E3p3c2gC3EzDszuveT9zmOewrgLnsTJcqsxjDegygUxfMgtq6G6tivENbk6tRgEjw41WrKCFZTYBXMjs5tBfizHJO9cW7jyFcV/+yZ/+Q7s+HN888MaR4LUiqOFV9+clxfqV7NS": "utter_ointment_recommendation",
+    "eJytT8sJwzAMXcUDdAKvEooRzqMYarm15FxMdq9CeyiB0hhy05PeT1NfL64/KpZAUVNh7/p7CEwZ3n3APYmCjdsE1TiJDap3Fc8G0TAnAQlCJCOsfzybKupOco7zYNtMTDdku41V/tKdmHGwfLHFZhcqYsk2zbTpjn3wSzyedn0BQLve4g==": "action_listen"
+  }
+}

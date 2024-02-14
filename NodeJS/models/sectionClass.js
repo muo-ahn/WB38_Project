@@ -17,11 +17,11 @@ class chatClass {
     this.queryAsync = util.promisify(this.db.query).bind(this.db);
   }
 
-  async getDBdata(type1, type2, question, callback) {
+  async getDBdata(type, question, callback) {
     const queryResult = question
       ? this.db.query(
-          "SELECT RESULT FROM CHATBOT WHERE type = ? AND class = ? AND question = ?",
-          [type1, type2, question],
+          "SELECT RESULT FROM CHATBOT WHERE question = ?",
+          [question],
           (error, results) => {
             if (error) return callback(error);
 
@@ -29,8 +29,8 @@ class chatClass {
           }
         )
       : this.db.query(
-          "SELECT QUESTION FROM CHATBOT WHERE type = ? AND class = ?",
-          [type1, type2],
+          "SELECT QUESTION FROM CHATBOT WHERE class = ?",
+          [type],
           (error, results) => {
             if (error) return callback(error);
 

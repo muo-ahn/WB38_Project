@@ -94,7 +94,7 @@ FOREIGN KEY (username) REFERENCES userTable(username)
 ALTER TABLE userHistory
 ADD COLUMN diseasepossibility FLOAT DEFAULT 0;
 
-1. To run Node.JS Main Server: Open the termianl. Command "cd NodeJS", "forever start Main.js"
+1. To run Node.JS Main Server: run the Main.js in NodeJS directory.
 
 2. To run FastAPI Server: Open the terminal, Command "cd FastAPI", "uvicorn main:app --reload --host=0.0.0.0 --port=9000"
 
@@ -105,3 +105,5 @@ ADD COLUMN diseasepossibility FLOAT DEFAULT 0;
 5. Run Triton Inference Sever with models
 
 6. You can run the test
+
+7.

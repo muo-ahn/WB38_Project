@@ -1,0 +1,6 @@
+[
+  {
+    "name": "disease_probability",
+    "pattern": "[0-9]+"
+  }
+]

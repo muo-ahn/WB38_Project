@@ -1,0 +1,10 @@
+[
+  {
+    "name": "disease_improvement",
+    "pattern": "[0-9]+"
+  },
+  {
+    "name": "disease_probability",
+    "pattern": "[0-9]+"
+  }
+]

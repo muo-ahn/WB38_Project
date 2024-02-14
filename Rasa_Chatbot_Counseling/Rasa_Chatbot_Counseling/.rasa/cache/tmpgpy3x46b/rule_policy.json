@@ -1,0 +1,18 @@
+{
+  "lookup": {
+    "rules": {
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"\\uc791\\ubcc4\\uc778\\uc0ac\"}}]": "작별인사_응답",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"\\uc791\\ubcc4\\uc778\\uc0ac\"}}, {\"prev_action\": {\"action_name\": \"\\uc791\\ubcc4\\uc778\\uc0ac_\\uc751\\ub2f5\"}, \"user\": {\"intent\": \"\\uc791\\ubcc4\\uc778\\uc0ac\"}}]": "action_listen"
+    },
+    "rule_only_slots": [],
+    "rule_only_loops": [],
+    "rules_for_loop_unhappy_path": {},
+    "rules_not_in_stories": [
+      "predicting default action with intent session_start",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"\\uc791\\ubcc4\\uc778\\uc0ac\"}}]",
+      "predicting default action with intent restart",
+      "predicting default action with intent back",
+      "[{\"prev_action\": {\"action_name\": \"action_listen\"}, \"user\": {\"intent\": \"\\uc791\\ubcc4\\uc778\\uc0ac\"}}, {\"prev_action\": {\"action_name\": \"\\uc791\\ubcc4\\uc778\\uc0ac_\\uc751\\ub2f5\"}, \"user\": {\"intent\": \"\\uc791\\ubcc4\\uc778\\uc0ac\"}}]"
+    ]
+  }
+}

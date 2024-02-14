@@ -1,0 +1,56 @@
+version: "3.1"
+
+stories:
+
+- story: counseling_base
+  steps:
+  # 진단 코드 발송 
+  - intent: request_disease
+  # 진단 결과 
+  - action: action_disease_Inspection_Result
+
+  # 1.질병 원인 질문 
+  - intent: request_disease_cause
+  # 질병 원인 응답 
+  - action: action_utter_request_disease
+
+  # 2. 질병 치료방법 질문 
+  - intent: request_disease_treatment
+  # 질병 치료방법 응답 
+  - action: action_utter_request_disease
+
+  # 3. 질병 추후 관리,방지 질문  
+  - intent: request_disease_management
+  # 질병 추후 관리 응답 
+  - action: action_utter_request_disease
+
+  # 4.질병 예방 질문 
+  - intent: request_disease_prevention
+  # 질병 원인 응답 
+  - action: action_utter_request_disease
+
+  # 5.질병 주의사항 질문 
+  - intent: request_disease_caution
+  # 질병 치료방법 응답 
+  - action: action_utter_request_disease
+
+  # 6.질병 악화 질문  
+  - intent: request_disease_worse
+  # 질병 추후 관리 응답 
+  - action: action_utter_request_disease
+
+  # 7. 질병 약 알레르기 질문 
+  - intent: request_disease_allergy
+  # 질병 치료방법 응답 
+  - action: action_utter_request_disease
+
+# 8. 질병 감염 질문  
+  - intent: request_disease_infection
+  # 질병 추후 관리 응답 
+  - action: action_utter_request_disease
+
+# 9. 질병 홈케어 질문  
+  - intent: request_disease_homeCare
+  # 질병 추후 관리 응답 
+  - action: action_utter_request_disease
+

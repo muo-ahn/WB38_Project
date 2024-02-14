@@ -1,0 +1,441 @@
+version: "3.1"
+
+nlu:
+
+#질병 코드
+- intent: request_disease
+  examples: |
+    # disease_probability는 변수로 받기 
+    - [sk01](disease_code), [80](disease_probability), [5](disease_improvement)
+    - [sk02](disease_code), [80](disease_probability), [5](disease_improvement)
+    - [sk03](disease_code), [80](disease_probability), [5](disease_improvement)
+    - [sk04](disease_code), [80](disease_probability), [5](disease_improvement)
+    - [sk05](disease_code), [80](disease_probability), [5](disease_improvement)
+    - [sk06](disease_code), [80](disease_probability), [5](disease_improvement)
+
+# 정규 표현식
+- regex: disease_probability
+  examples: |
+    - [0-9]+
+
+# 정규 표현식
+- regex: disease_improvement
+  examples: |
+    - [0-9]+
+
+#질병 원인 
+- intent: request_disease_cause
+  examples: |
+    ###### sk01
+    ## 구진 & 플라크 
+    - [구진](disease_name) 질병 [원인](disease_info_keyword_cause)
+    - [구진](disease_name) 질병 [원인](disease_info_keyword_cause) 무엇
+    - [구진](disease_name) 질병의 [원인](disease_info_keyword_cause) 무엇인가요
+    - [구진](disease_name) 질병 [발병](disease_info_keyword_cause) 이유가 무엇인가요
+    - 왜 [구진](disease_name)이 [발생](disease_info_keyword_cause)한 것이죠
+
+    ## 구진 & 플라크 
+    - [플라크](disease_name) 질병 [원인](disease_info_keyword_cause)
+    - [플라크](disease_name) 질병 [원인](disease_info_keyword_cause) 무엇
+    - [플라크](disease_name) 질병의 [원인](disease_info_keyword_cause) 무엇인가요
+    - [플라크](disease_name) 질병 [발병](disease_info_keyword_cause) 이유가 무엇인가요
+    - 왜 [플라크](disease_name)이 [발생](disease_info_keyword_cause)한 것이죠
+
+    ###### sk02
+    ## 비듬,각질,상피성잔고리
+    - [비듬](disease_name) 질병 [원인](disease_info_keyword_cause)
+    - [비듬](disease_name) 질병 [원인](disease_info_keyword_cause) 무엇
+    - [비듬](disease_name) 질병의 [원인](disease_info_keyword_cause) 무엇인가요
+    - [비듬](disease_name) 질병 [발병](disease_info_keyword_cause) 이유가 무엇인가요
+    - 왜 [비듬](disease_name)이 [발생](disease_info_keyword_cause)한 것이죠
+
+    ## 비듬,각질,상피성잔고리
+    - [각질](disease_name) 질병 [원인](disease_info_keyword_cause)
+    - [각질](disease_name) 질병 [원인](disease_info_keyword_cause) 무엇
+    - [각질](disease_name) 질병의 [원인](disease_info_keyword_cause) 무엇인가요
+    - [각질](disease_name) 질병 발병 [이유](disease_info_keyword_cause)가 무엇인가요
+    - [왜](disease_info_keyword_cause) [각질](disease_name)이 발생한 것이죠
+    - [왜](disease_info_keyword_cause) 그런가요?
+
+    ## 비듬,각질,상피성잔고리
+    - [상피성잔고리](disease_name) 질병 [원인](disease_info_keyword_cause)
+    - [상피성잔고리](disease_name) 질병 [원인](disease_info_keyword_cause) 무엇
+    - [상피성잔고리](disease_name) 질병의 [원인](disease_info_keyword_cause) 무엇인가요
+    - [상피성잔고리](disease_name) 질병 [발병](disease_info_keyword_cause) 이유가 무엇인가요
+    - 왜 [상피성잔고리](disease_name)이 [발생](disease_info_keyword_cause)한 것이죠
+
+    ###### sk03
+    ## 태선화,과다색소침착
+    - [태선화](disease_name) 질병 [원인](disease_info_keyword_cause)
+    - [태선화](disease_name) 질병 [원인](disease_info_keyword_cause) 무엇
+    - [태선화](disease_name) 질병의 [원인](disease_info_keyword_cause) 무엇인가요
+    - [태선화](disease_name) 질병 [발병](disease_info_keyword_cause) 이유가 무엇인가요
+    - 왜 [태선화](disease_name)이 [발생](disease_info_keyword_cause)한 것이죠
+
+    ## 태선화,과다색소침착
+    - [과다색소침착](disease_name) 질병 [원인](disease_info_keyword_cause)
+    - [과다색소침착](disease_name) 질병 [원인](disease_info_keyword_cause) 무엇
+    - [과다색소침착](disease_name) 질병의 [원인](disease_info_keyword_cause) 무엇인가요
+    - [과다색소침착](disease_name) 질병 [발병](disease_info_keyword_cause) 이유가 무엇인가요
+    - 왜 [과다색소침착](disease_name)이 [발생](disease_info_keyword_cause)한 것이죠
+
+    ###### sk04
+    ## 농포,여드름
+    - [농포](disease_name) 질병 [원인](disease_info_keyword_cause)
+    - [농포](disease_name) 질병 [원인](disease_info_keyword_cause) 무엇
+    - [농포](disease_name) 질병의 [원인](disease_info_keyword_cause) 무엇인가요
+    - [농포](disease_name) 질병 [발병](disease_info_keyword_cause) 이유가 무엇인가요
+    - 왜 [농포](disease_name)이 [발생](disease_info_keyword_cause)한 것이죠
+
+    ## 농포,여드름
+    - [여드름](disease_name) 질병 [원인](disease_info_keyword_cause)
+    - [여드름](disease_name) 질병 [원인](disease_info_keyword_cause) 무엇
+    - [여드름](disease_name) 질병의 [원인](disease_info_keyword_cause) 무엇인가요
+    - [여드름](disease_name) 질병 [발병](disease_info_keyword_cause) 이유가 무엇인가요
+    - 왜 [여드름](disease_name)이 [발생](disease_info_keyword_cause)한 것이죠
+
+    ###### sk05
+    ## 미란,궤양
+    - [미란](disease_name) 질병 [원인](disease_info_keyword_cause)
+    - [미란](disease_name) 질병 [원인](disease_info_keyword_cause) 무엇
+    - [미란](disease_name) 질병의 [원인](disease_info_keyword_cause) 무엇인가요
+    - [미란](disease_name) 질병 [발병](disease_info_keyword_cause) 이유가 무엇인가요
+    - 왜 [미란](disease_name)이 [발생](disease_info_keyword_cause)한 것이죠
+
+    ## 미란,궤양
+    - [궤양](disease_name) 질병 [원인](disease_info_keyword_cause)
+    - [궤양](disease_name) 질병 [원인](disease_info_keyword_cause) 무엇
+    - [궤양](disease_name) 질병의 [원인](disease_info_keyword_cause) 무엇인가요
+    - [궤양](disease_name) 질병 [발병](disease_info_keyword_cause) 이유가 무엇인가요
+    - 왜 [궤양](disease_name)이 [발생](disease_info_keyword_cause)한 것이죠
+
+    ###### sk06
+    ## 결절,종괴
+    - [결절](disease_name) 질병 [원인](disease_info_keyword_cause)
+    - [결절](disease_name) 질병 [원인](disease_info_keyword_cause) 무엇
+    - [결절](disease_name) 질병의 [원인](disease_info_keyword_cause) 무엇인가요
+    - [결절](disease_name) 질병 [발병](disease_info_keyword_cause) 이유가 무엇인가요
+    - 왜 [결절](disease_name)이 [발생](disease_info_keyword_cause)한 것이죠
+
+    ## 결절,종괴
+    - [종괴](disease_name) 질병 [원인](disease_info_keyword_cause)
+    - [종괴](disease_name) 질병 [원인](disease_info_keyword_cause) 무엇
+    - [종괴](disease_name) 질병의 [원인](disease_info_keyword_cause) 무엇인가요
+    - [종괴](disease_name) 질병 [발병](disease_info_keyword_cause) 이유가 무엇인가요
+    - 왜 [종괴](disease_name)이 [발생](disease_info_keyword_cause)한 것이죠
+
+    - 질병 [원인](disease_info_keyword_cause)
+    - 질병 [원인](disease_info_keyword_cause) 무엇
+    - 질병의 [원인](disease_info_keyword_cause) 무엇인가요
+    - 질병 [발병](disease_info_keyword_cause) 이유가 무엇인가요
+    - 왜 [발생](disease_info_keyword_cause)한 것이죠
+
+    
+#질병 치료 질문 
+- intent: request_disease_treatment
+  examples: |
+    ###### sk01
+    ## 구진 & 플라크 
+    - 그러면 [구진](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - [구진](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - 해당 증상을 완화하기 위해 어떤 [구진](disease_name) [치료](disease_info_keyword_treatment) 방법을 고려해 볼 수 있을까요
+    - 증상을 개선하기 위해 어떤 [구진](disease_name) [조치](disease_info_keyword_treatment)를 취해야 할까요
+    - 해당 질병을 [구진](disease_name) [치료](disease_info_keyword_treatment)하기 위해 어떤 방법들을 고려해 볼 수 있을까
+    - 증상을 완전히 없애기 위해 어떤 [구진](disease_name) [치료](disease_info_keyword_treatment) 방법이 효과적일까요
+    - 해당 질병의 [구진](disease_name) [치료](disease_info_keyword_treatment)를 위해 어떤 치료법을 고려해야 할까요
+
+    ## 구진 & 플라크 
+    - 그러면 [플라크](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - [플라크](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - 해당 증상을 완화하기 위해 어떤 [플라크](disease_name) [치료](disease_info_keyword_treatment) 방법을 고려해 볼 수 있을까요
+    - 증상을 개선하기 위해 어떤 [플라크](disease_name) [조치](disease_info_keyword_treatment)를 취해야 할까요
+    - 해당 질병을 [플라크](disease_name) [치료](disease_info_keyword_treatment)하기 위해 어떤 방법들을 고려해 볼 수 있을까
+    - 증상을 완전히 없애기 위해 어떤 [플라크](disease_name) [치료](disease_info_keyword_treatment) 방법이 효과적일까요
+    - 해당 질병의 [플라크](disease_name) [치료](disease_info_keyword_treatment)를 위해 어떤 치료법을 고려해야 할까요
+
+    ###### sk02
+    ## 비듬  & 각질 & 상피성잔고리
+    - 그러면 [비듬](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - [비듬](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - 해당 증상을 완화하기 위해 어떤 [비듬](disease_name) [치료](disease_info_keyword_treatment) 방법을 고려해 볼 수 있을까요
+    - 증상을 개선하기 위해 어떤 [비듬](disease_name) [조치](disease_info_keyword_treatment)를 취해야 할까요
+    - 해당 질병을 [비듬](disease_name) [치료](disease_info_keyword_treatment)하기 위해 어떤 방법들을 고려해 볼 수 있을까
+    - 증상을 완전히 없애기 위해 어떤 [비듬](disease_name) [치료](disease_info_keyword_treatment) 방법이 효과적일까요
+    - 해당 질병의 [비듬](disease_name) [치료](disease_info_keyword_treatment)를 위해 어떤 치료법을 고려해야 할까요
+
+    ## 비듬  & 각질 & 상피성잔고리 
+    - 그러면 [각질](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - [각질](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - 해당 증상을 완화하기 위해 어떤 [각질](disease_name) [치료](disease_info_keyword_treatment) 방법을 고려해 볼 수 있을까요
+    - 증상을 개선하기 위해 어떤 [각질](disease_name) [조치](disease_info_keyword_treatment)를 취해야 할까요
+    - 해당 질병을 [각질](disease_name) [치료](disease_info_keyword_treatment)하기 위해 어떤 방법들을 고려해 볼 수 있을까
+    - 증상을 완전히 없애기 위해 어떤 [각질](disease_name) [치료](disease_info_keyword_treatment) 방법이 효과적일까요
+    - 해당 질병의 [각질](disease_name) [치료](disease_info_keyword_treatment)를 위해 어떤 치료법을 고려해야 할까요
+
+    ## 비듬  & 각질 & 상피성잔고리 
+    - 그러면 [상피성잔고리](disease_name) [치료](disease_info_keyword_treatment)방법은 어떻게 해야 할까요
+    - [상피성잔고리](disease_name) [치료](disease_info_keyword_treatment)방법은 어떻게 해야 할까요
+    - 해당 증상을 완화하기 위해 어떤 [상피성잔고리](disease_name) [치료](disease_info_keyword_treatment)방법을 고려해 볼 수 있을까요
+    - 증상을 개선하기 위해 어떤 [상피성잔고리](disease_name) [조치](disease_info_keyword_treatment)를 취해야 할까요
+    - 해당 질병을 [상피성잔고리](disease_name) [치료](disease_info_keyword_treatment)하기 위해 어떤 방법들을 고려해 볼 수 있을까
+    - 증상을 완전히 없애기 위해 어떤 [상피성잔고리](disease_name) [치료](disease_info_keyword_treatment) 방법이 효과적일까요
+    - 해당 질병의 [상피성잔고리](disease_name) [치료](disease_info_keyword_treatment)를 위해 어떤 치료법을 고려해야 할까요
+
+    ###### sk03
+    ## 태선화& 과다색소침착
+    - 그러면 [태선화](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - [태선화](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - 해당 증상을 완화하기 위해 어떤 [태선화](disease_name) [치료](disease_info_keyword_treatment) 방법을 고려해 볼 수 있을까요
+    - 증상을 개선하기 위해 어떤 [태선화](disease_name) [조치](disease_info_keyword_treatment)를 취해야 할까요
+    - 해당 질병을 [태선화](disease_name) [치료](disease_info_keyword_treatment)하기 위해 어떤 방법들을 고려해 볼 수 있을까
+    - 증상을 완전히 없애기 위해 어떤 [태선화](disease_name) [치료](disease_info_keyword_treatment) 방법이 효과적일까요
+    - 해당 질병의 [태선화](disease_name) [치료](disease_info_keyword_treatment)를 위해 어떤 치료법을 고려해야 할까요
+
+    ## 구진 & 플라크 
+    - 그러면 [과다색소침착](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - [과다색소침착](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - 해당 증상을 완화하기 위해 어떤 [과다색소침착](disease_name) [치료](disease_info_keyword_treatment) 방법을 고려해 볼 수 있을까요
+    - 증상을 개선하기 위해 어떤 [과다색소침착](disease_name) [조치](disease_info_keyword_treatment)를 취해야 할까요
+    - 해당 질병을 [과다색소침착](disease_name) [치료](disease_info_keyword_treatment)하기 위해 어떤 방법들을 고려해 볼 수 있을까
+    - 증상을 완전히 없애기 위해 어떤 [과다색소침착](disease_name) [치료](disease_info_keyword_treatment) 방법이 효과적일까요
+    - 해당 질병의 [과다색소침착](disease_name) [치료](disease_info_keyword_treatment)를 위해 어떤 치료법을 고려해야 할까요
+
+    ###### sk04
+    ## 농포 & 여드름
+    - 그러면 [농포](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - [농포](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - 해당 증상을 완화하기 위해 어떤 [농포](disease_name) [치료](disease_info_keyword_treatment) 방법을 고려해 볼 수 있을까요
+    - 증상을 개선하기 위해 어떤 [농포](disease_name) [조치](disease_info_keyword_treatment)를 취해야 할까요
+    - 해당 질병을 [농포](disease_name) [치료](disease_info_keyword_treatment)하기 위해 어떤 방법들을 고려해 볼 수 있을까
+    - 증상을 완전히 없애기 위해 어떤 [농포](disease_name) [치료](disease_info_keyword_treatment) 방법이 효과적일까요
+    - 해당 질병의 [농포](disease_name) [치료](disease_info_keyword_treatment)를 위해 어떤 치료법을 고려해야 할까요
+
+    ## 구진 & 플라크 
+    - 그러면 [여드름](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - [여드름](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - 해당 증상을 완화하기 위해 어떤 [여드름](disease_name) [치료](disease_info_keyword_treatment) 방법을 고려해 볼 수 있을까요
+    - 증상을 개선하기 위해 어떤 [여드름](disease_name) [조치](disease_info_keyword_treatment)를 취해야 할까요
+    - 해당 질병을 [여드름](disease_name) [치료](disease_info_keyword_treatment)하기 위해 어떤 방법들을 고려해 볼 수 있을까
+    - 증상을 완전히 없애기 위해 어떤 [여드름](disease_name) [치료](disease_info_keyword_treatment) 방법이 효과적일까요
+    - 해당 질병의 [여드름](disease_name) [치료](disease_info_keyword_treatment)를 위해 어떤 치료법을 고려해야 할까요
+
+    ###### sk05
+    ## 미란& 궤양
+    - 그러면 [미란](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - [미란](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - 해당 증상을 완화하기 위해 어떤 [미란](disease_name) [치료](disease_info_keyword_treatment) 방법을 고려해 볼 수 있을까요
+    - 증상을 개선하기 위해 어떤 [미란](disease_name) [조치](disease_info_keyword_treatment)를 취해야 할까요
+    - 해당 질병을 [미란](disease_name) [치료](disease_info_keyword_treatment)하기 위해 어떤 방법들을 고려해 볼 수 있을까
+    - 증상을 완전히 없애기 위해 어떤 [미란](disease_name) [치료](disease_info_keyword_treatment) 방법이 효과적일까요
+    - 해당 질병의 [미란](disease_name) [치료](disease_info_keyword_treatment)를 위해 어떤 치료법을 고려해야 할까요
+
+    ## 미란& 궤양
+    - 그러면 [궤양](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - [궤양](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - 해당 증상을 완화하기 위해 어떤 [궤양](disease_name) [치료](disease_info_keyword_treatment) 방법을 고려해 볼 수 있을까요
+    - 증상을 개선하기 위해 어떤 [궤양](disease_name) [조치](disease_info_keyword_treatment)를 취해야 할까요
+    - 해당 질병을 [궤양](disease_name) [치료](disease_info_keyword_treatment)하기 위해 어떤 방법들을 고려해 볼 수 있을까
+    - 증상을 완전히 없애기 위해 어떤 [궤양](disease_name) [치료](disease_info_keyword_treatment) 방법이 효과적일까요
+    - 해당 질병의 [궤양](disease_name) [치료](disease_info_keyword_treatment)를 위해 어떤 치료법을 고려해야 할까요
+
+    ###### sk06
+    ## 결절& 종괴
+    - 그러면 [결절](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - [결절](disease_name) [치료](disease_info_keyword_treatment) 방법은 어떻게 해야 할까요
+    - 해당 증상을 완화하기 위해 어떤 [결절](disease_name) [치료](disease_info_keyword_treatment) 방법을 고려해 볼 수 있을까요
+    - 증상을 개선하기 위해 어떤 [결절](disease_name) [조치](disease_info_keyword_treatment)를 취해야 할까요
+    - 해당 질병을 [결절](disease_name) [치료](disease_info_keyword_treatment)하기 위해 어떤 방법들을 고려해 볼 수 있을까
+    - 증상을 완전히 없애기 위해 어떤 [결절](disease_name) [치료](disease_info_keyword_treatment) 방법이 효과적일까요
+    - 해당 질병의 [결절](disease_name) [치료](disease_info_keyword_treatment)를 위해 어떤 치료법을 고려해야 할까요
+
+    ## 결절&종괴
+    - 그러면 [종괴](disease_name) [치료](disease_info_keyword_treatment)방법은 어떻게 해야 할까요
+    - [종괴](disease_name) [치료](disease_info_keyword_treatment)방법은 어떻게 해야 할까요
+    - 해당 증상을 완화하기 위해 어떤 [종괴](disease_name) [치료](disease_info_keyword_treatment) 방법을 고려해 볼 수 있을까요
+    - 증상을 개선하기 위해 어떤 [종괴](disease_name) [조치](disease_info_keyword_treatment)를 취해야 할까요
+    - 해당 질병을 [종괴](disease_name) [치료](disease_info_keyword_treatment)하기 위해 어떤 방법들을 고려해 볼 수 있을까
+    - 증상을 완전히 없애기 위해 어떤 [종괴](disease_name) [치료](disease_info_keyword_treatment) 방법이 효과적일까요
+    - 해당 질병의 [종괴](disease_name) [치료](disease_info_keyword_treatment)를 위해 어떤 치료법을 고려해야 할까요
+
+    - 그러면 어떻게 [치료](disease_info_keyword_treatment)를 해야할까요?
+    - [치료](disease_info_keyword_treatment)방법은 어떻게 해야 할까요
+    - 해당 증상을 완화하기 위해 어떤 [치료](disease_info_keyword_treatment)방법을 고려해 볼 수 있을까요
+    - 증상을 개선하기 위해 어떤 [조치](disease_info_keyword_treatment)를 취해야 할까요
+    - 해당 질병을 [치료](disease_info_keyword_treatment)하기 위해 어떤 방법들을 고려해 볼 수 있을까
+    - 증상을 완전히 없애기 위해 어떤 [치료](disease_info_keyword_treatment)법이 효과적일까요
+    - 해당 질병의 [치료](disease_info_keyword_treatment)를 위해 어떤 치료법을 고려해야 할까요
+
+#질병 관리 질문   
+- intent: request_disease_management
+  examples: |
+    ###### sk01
+    ## 구진 & 플라크 
+
+    - 그러면 [구진](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 그럼 [구진](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 돼
+    - [구진](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [구진](disease_name) 추후 [관리](disease_info_keyword_management) 방법을 알려줘
+    - 그러면 [구진](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [구진](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 추후에 [구진](disease_name) [관리](disease_info_keyword_management) 방법
+    - 추후에 [구진](disease_name) [유지](disease_info_keyword_management) 방법은
+
+    ## 구진 & 플라크 
+    - 그러면 [플라크](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 그럼 [플라크](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 돼
+    - [플라크](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [플라크](disease_name) [관리](disease_info_keyword_management) 방법을 알려줘
+    - 그러면 [플라크](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [플라크](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 추후에 [플라크](disease_name) [관리](disease_info_keyword_management) 방법
+    - 추후에 [플라크](disease_name) [유지](disease_info_keyword_management) 방법은
+
+    ###### sk02
+    ## 비듬& 각질 &상피성잔고리
+
+    - 그러면 [비듬](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 그럼 [비듬](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 돼
+    - [비듬](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [비듬](disease_name) 추후 [관리](disease_info_keyword_management) 방법을 알려줘
+    - 그러면 [비듬](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [비듬](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 추후에 [비듬](disease_name) [관리](disease_info_keyword_management) 방법
+    - 추후에 [비듬](disease_name) [유지](disease_info_keyword_management) 방법은
+
+    ## 비듬& 각질 &상피성잔고리
+    - 그러면 [각질](disease_name)에 대한 [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 그럼 [각질](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 돼
+    - [각질](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [각질](disease_name) [관리](disease_info_keyword_management) 방법을 알려줘
+    - 그러면 [각질](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [각질](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 추후에 [각질](disease_name) [관리](disease_info_keyword_management) 방법
+    - 추후에 [각질](disease_name) [유지](disease_info_keyword_management) 방법은
+
+    - 그러면 [상피성잔고리](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 그럼 [상피성잔고리](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 돼
+    - [상피성잔고리](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [상피성잔고리](disease_name) [관리](disease_info_keyword_management) 방법을 알려줘
+    - 그러면 [상피성잔고리](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [상피성잔고리](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 추후에 [상피성잔고리](disease_name) [관리](disease_info_keyword_management) 방법
+    - 추후에 [상피성잔고리](disease_name) [유지](disease_info_keyword_management) 방법은
+
+    ###### sk03
+    ## 태선화& 과다색소침착
+
+    - 그러면 [태선화](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 그럼 [태선화](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 돼
+    - [태선화](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [태선화](disease_name) 추후 [관리](disease_info_keyword_management) 방법을 알려줘
+    - 그러면 [태선화](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [태선화](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 추후에 [태선화](disease_name) [관리](disease_info_keyword_management) 방법
+    - 추후에 [태선화](disease_name) [유지](disease_info_keyword_management) 방법은
+
+    ## 태선화& 과다색소침착
+    - 그러면 [과다색소침착](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 그럼 [과다색소침착](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 돼
+    - [과다색소침착](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [과다색소침착](disease_name) [관리](disease_info_keyword_management) 방법을 알려줘
+    - 그러면 [과다색소침착](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [과다색소침착](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 추후에 [과다색소침착](disease_name) [관리](disease_info_keyword_management) 방법
+    - 추후에 [과다색소침착](disease_name) [유지](disease_info_keyword_management) 방법은
+
+    ###### sk04
+    ## 농포& 여드름
+
+    - 그러면 [농포](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 그럼 [농포](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 돼
+    - [농포](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [농포](disease_name) 추후 [관리](disease_info_keyword_management) 방법을 알려줘
+    - 그러면 [농포](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [농포](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 추후에 [농포](disease_name) [관리](disease_info_keyword_management) 방법
+    - 추후에 [농포](disease_name) [유지](disease_info_keyword_management) 방법은
+
+    ## 태선화& 과다색소침착
+    - 그러면 [여드름](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 그럼 [여드름](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 돼
+    - [여드름](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [여드름](disease_name) [관리](disease_info_keyword_management) 방법을 알려줘
+    - 그러면 [여드름](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [여드름](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 추후에 [여드름](disease_name) [관리](disease_info_keyword_management) 방법
+    - 추후에 [여드름](disease_name) [유지](disease_info_keyword_management) 방법은
+
+    ###### sk05
+    ## 미란& 궤양
+
+    - 그러면 [미란](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 그럼 [미란](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 돼
+    - [미란](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [미란](disease_name) 추후 [관리](disease_info_keyword_management) 방법을 알려줘
+    - 그러면 [미란](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [미란](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 추후에 [미란](disease_name) [관리](disease_info_keyword_management) 방법
+    - 추후에 [미란](disease_name) [유지](disease_info_keyword_management) 방법은
+
+    ## 미란& 궤양
+    - 그러면 [궤양](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 그럼 [궤양](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 돼
+    - [궤양](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [궤양](disease_name) [관리](disease_info_keyword_management) 방법을 알려줘
+    - 그러면 [궤양](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [궤양](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 추후에 [궤양](disease_name) [관리](disease_info_keyword_management) 방법
+    - 추후에 [궤양](disease_name) [유지](disease_info_keyword_management) 방법은
+
+    ###### sk05
+    ## 결절& 종괴
+
+    - 그러면 [결절](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 그럼 [결절](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 돼
+    - [결절](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [결절](disease_name) 추후 [관리](disease_info_keyword_management) 방법을 알려줘
+    - 그러면 [결절](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [결절](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 추후에 [결절](disease_name) [관리](disease_info_keyword_management) 방법
+    - 추후에 [결절](disease_name) [유지](disease_info_keyword_management) 방법은
+
+    ## 미결절& 종괴
+    - 그러면 [종괴](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 그럼 [종괴](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 돼
+    - [종괴](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [종괴](disease_name) [관리](disease_info_keyword_management) 방법을 알려줘
+    - 그러면 [종괴](disease_name) [관리](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [종괴](disease_name) [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 추후에 [종괴](disease_name) [관리](disease_info_keyword_management) 방법
+    - 추후에 [종괴](disease_name) [유지](disease_info_keyword_management) 방법은
+
+    - 그러면 [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 그럼 [관리](disease_info_keyword_management) 방법은 어떻게 해야 돼
+    - [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [관리](disease_info_keyword_management) 방법을 알려줘
+    - 그러면 [관리](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - [유지](disease_info_keyword_management) 방법은 어떻게 해야 할까요
+    - 추후에[관리](disease_info_keyword_management) 방법
+    - 추후에 [유지](disease_info_keyword_management) 방법은
+
+
+#연고 추천 
+- intent: request_ointment_recommendation
+  examples: |
+    - 혹시 피부 연고를 추천해 줄 수있나요? 
+    - 약 추천해줘.
+    - 연고 추천해줘.
+    - 어떤 약을 사용해야 해
+    - 어떤 연고를 사용해야 해
+    - 연고 추천
+    - 약 추천
+
+#챗봇 종료  
+- intent: request_end
+  examples: |
+    - 챗봇 종료
+    - 상담 종료 
+    - 종료
+    - 종료할께요
+    - 상담 종료할께요
+

@@ -13,7 +13,6 @@ router.post("", async (req, res) => {
 
   try {
     sectionModule.getDBdata(
-      req.body.type1,
       req.body.type2,
       req.body.question,
       async (error, results) => {
