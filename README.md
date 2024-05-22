@@ -1,28 +1,17 @@
 # WB38_Project
 
+## Summary
+- Front : React.js
+- Backend : Node.js, FastAPI, Triton Inference Server
+- AI : Tensorflow
+
+==================================================
+
 WB38_Team2_Project
 
 Project Leader : 안동혁
 
 Project Members : 권순호, 이현수, 김경익, 문성현, 황수영
-
-==================================================
-
-12th Dec, 안동혁 : server file upload logic works.
-
-13th Dec, 안동혁 : passport, localStrategy 완료
-
-14th Dec, 안동혁 : Node.js process.env 환경 변수 설정, password hashing 오류 해결
-
-15th Dec, 안동혁 : file module finish
-
-19th Dec, 안동혁 : Kakao, Naver passport
-
-20th Dec, 안동혁 : try to run Triton Inference Server
-
-06th Jan, 안동혁 : Triton, Rasa server 연결 성공
-
-15th Jan, 안동혁 : input 전처리 및 정규화 서버 분할 - node.js tensorflow/tfjs-node 패키지 설치 오류
 
 ==================================================
 참고 서적 및 사이트
